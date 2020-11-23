@@ -3,7 +3,7 @@
 
 #include "switchpnl.h"
 #include "clock.h"
-#include "lcd.h"
+#include "display.h"
 
 
 /*************/
@@ -11,8 +11,8 @@
 /*************/
 
 // Swtich & encoder constants
-static const uint8_t ENC_NUM_PINS = 2;  // Number of pins per encoder
-static const uint8_t NUM_BUTTONS = 2;  // Number of swtiches of type button
+static const uint8_t ENC_NUM_PINS = 2U;  // Number of pins per encoder
+static const uint8_t NUM_BUTTONS = 2U;  // Number of swtiches of type button
 
 // ARDUINO NANO connections
 // Switches
@@ -20,12 +20,12 @@ static const uint8_t PIN_ENC[ENC_NUM_PINS] = { 2, 3 };
 static const uint8_t PIN_BTN_ENT = 0; /* RX0 */
 static const uint8_t PIN_BTN_BCK = 1; /* TX1 */
 // Display
-static const uint8_t PIN_DSP_RS = 12;
-static const uint8_t PIN_DSP_E = 11;
-static const uint8_t PIN_DSP_D4 = A3;
-static const uint8_t PIN_DSP_D5 = A2;
-static const uint8_t PIN_DSP_D6 = A1;
-static const uint8_t PIN_DSP_D7 = A0;
+static const uint8_t PIN_LCD_RS = 12;
+static const uint8_t PIN_LCD_E = 11;
+static const uint8_t PIN_LCD_D4 = A3;
+static const uint8_t PIN_LCD_D5 = A2;
+static const uint8_t PIN_LCD_D6 = A1;
+static const uint8_t PIN_LCD_D7 = A0;
 // RTC
 static const uint8_t PIN_RTC_SDA = A4;
 static const uint8_t PIN_RTC_SCL = A5;
@@ -46,7 +46,8 @@ static SwitchPnl SwitchPanel(PIN_ENC[0], PIN_ENC[1], PIN_BTN_ENT, PIN_BTN_BCK);
 // Object to manage time and conversions
 static Clock Rtc;
 // Object to manage the LCD display
-static Lcd Display;
+static Display Lcd(PIN_LCD_RS, PIN_LCD_E, PIN_LCD_D4, PIN_LCD_D5, PIN_LCD_D6,
+  PIN_LCD_D7);
 
 /***********/
 /* Methods */
