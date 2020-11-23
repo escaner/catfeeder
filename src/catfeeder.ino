@@ -1,3 +1,11 @@
+// #define NDEBUG
+// #define DEBUG_SERIAL
+
+#include "switchpnl.h"
+#include "clock.h"
+#include "lcd.h"
+
+
 /*************/
 /* Constants */
 /*************/
@@ -29,6 +37,17 @@ static const uint8_t PIN_ED_DIR = 5;
 static const uint8_t PIN_ED_STEP = 4;
 
 
+/*************/
+/* Variables */
+/*************/
+
+// Object to manage the input buttons and rotary encoder
+static SwitchPnl SwitchPanel(PIN_ENC[0], PIN_ENC[1], PIN_BTN_ENT, PIN_BTN_BCK);
+// Object to manage time and conversions
+static Clock Rtc;
+// Object to manage the LCD display
+static Lcd Display;
+
 /***********/
 /* Methods */
 /***********/
@@ -39,6 +58,16 @@ void setup()
 #ifdef DEBUG_SERIAL
   Serial.begin(57600);
 #endif
+
+  // Initialize buttons object
+  SwitchPanel.init();
+
+  // Initialize display object
+  Lcd.init();
+
+  // Initialize RTC and check for errors
+  if (Rtc.init())
+    Lcd.error("·");
 
 #ifdef DEBUG_SERIAL
   while (!Serial)

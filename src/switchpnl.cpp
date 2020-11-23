@@ -25,7 +25,7 @@ SwitchPnl::SwitchPnl(uint8_t PinSelectA, uint8_t PinSelectB, uint8_t PinEnter,
 
 
 /*
- *   Configures Arduino pins for switches, pulling them HIGH as required.
+ *   Configures Arduino pins for switches, pulling them up as required.
  */
 void SwitchPnl::init() const
 {
@@ -44,7 +44,6 @@ SwitchPnl::Event SwitchPnl::check()
 {
   uint8_t Val0, Val1;
   int8_t StepSelect;
-  Event Ret;
 
   // Check Select encoder
   Val0 = digitalRead(_PinSelectA);
@@ -61,4 +60,6 @@ SwitchPnl::Event SwitchPnl::check()
   Val0 = digitalRead(_PinBack);
   if (_Back.updateFlank(Val0) == Switch::FLANK_FALLING)
     return EvBack;
+  
+  return EvNone;
 }
