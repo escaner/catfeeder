@@ -1,4 +1,5 @@
 #include <assert.h>
+#include <EEPROM.h>
 #include "feeds.h"
 
 
@@ -7,13 +8,13 @@
  */
 Feeds::Feeds():
   _SkipNextMeal(false),
-  _NextMealId(ID_NULL)
+  _NextMealId(_ID_NULL)
 {
   int Addr;
   uint8_t Id;
 
   // Initialize EEPROM address for each Meal object
-  for (Id=0, Addr=BASE_ADDR; Id<NUM_MEALS; Id++, Addr+=sizeof (Meal))
+  for (Id=0, Addr=_BASE_ADDR; Id<NUM_MEALS; Id++, Addr+=sizeof (Meal))
     _Meals[Id].setEepromAddress(Addr);
 }
 
@@ -63,10 +64,11 @@ uint8_t Feeds::check(const DateTime &Now)
   uint8_t Quantity;
 
   // Is there a next feed?
-  if (_NextMealId != ID_NULL)
+  if (_NextMealId != _ID_NULL)
   {
     // Check that deliver time has passed
     // if (bit(Now.dayOfTheWeek()) & _Meals[_NextMealId
+     Check that meal should not be skipped or skip it
   }
   else
     // No next feed time programmed -> do not deliver food
@@ -78,18 +80,63 @@ uint8_t Feeds::check(const DateTime &Now)
 
 /*
  *   Instruct to skip the next programmed meal. No more than one next meal can
- *  be skipped.
+ *  be skipped. If no meals are enabled, ignore skip action.
  */
-void Meals::skipNext()
+void Feeds::skipNext()
 {
   // If there is no programmed next meal, do nothing
-  if (_NextMealId != ID_NULL)
+  if (_NextMealId != _ID_NULL)
     _SkipNextMeal = true;
 }
 
 
-bool nextTime(const DateTime &Now, uint8_t *pHour, uint8_t *pMin) const
+/*
+ *   Deactivates the skip for the next programmed meal.
+ */
+void Feeds::skipNext()
 {
+  _SkipNextMeal = false;
+}
+
+
+/*
+ *   Returns whether the next meal is marked to be skipped or not.
+ */
+bool Feeds::isSkippingNext() const
+{
+  return _SkipNextMeal;
+}
+
+
+/*
+ *   Returns the time for next meal if any is programmed.
+ *  Parameters:
+ *  * pHour: return here the hour fraction for the next meal when not NEXT_NONE.
+ *  * pMinute: return here the minute fraction for the next meal when not
+ *    NEXT_NONE.
+ *  Returns:
+ *  * NEXT_NONE: there are no active meals.
+ *  * NEXT_OK: returns time for the next meal, which will be served.
+ *  * NEXT_SKIP: returns time for the next meal, but it is marked to be skipped.
+ */
+Feeds::Next_t Feeds::timeOfNext(uint8_t *pHour, uint8_t *pMinute) const
+{
+  Next_t NextFeed;
+
+  if (_NextMealId == _ID_NULL)
+    NextFeed = NEXT_NONE;  // No next meal, all disabled
+  else
+  {
+    if (_SkipNextMeal)
+      NextFeed = NEXT_SKIP;  // Skipping next meal
+    else
+      NextFeed = NEXT_OK;  // Next meal will be served
+
+    // Fill time both for OK and SKIP
+    _Meals[_NextMealId].getTime(pHour, pMinute);
+  }
+
+  return NextFeed;
 }
 
 
@@ -100,19 +147,25 @@ bool nextTime(const DateTime &Now, uint8_t *pHour, uint8_t *pMin) const
  *  Parameters:
  *  * Id: meal identifier.
  */
-Meal *Feeds::getMeal(uint8_t Id)
+Meal Feeds::getMeal(uint8_t Id) const
 {
   assert(Id < NUM_MEALS);
 
-  return _Meals+Id;
+  return _Meals[Id];
 }
 
+
+void setMeal(const DateTime &Now, uint8_t Id, const Meal &NewMeal)
+
+
+
 /*
- *   Updates class data after a change in one of the meals.
+ *   Updates class data after a change in one of the meals or in the last check
+ *  time, which is taken as reference time.
  *  Parameters:
  *  * Now: current time in official 24h format.
  */
-void Feeds::_updateNext(const DateTime &Now)
+void Feeds::_updateNext()
 {
   uint8_t Id;
 
@@ -121,8 +174,12 @@ void Feeds::_updateNext(const DateTime &Now)
     if (_Meals[Id].isEnabled())
       _NextMealId = Id;
 
-  // Continue through the rest of the meals and find the closest next one
+  // Continue loop through the rest of the meals and find the closest next one
   for (; Id<NUM_MEALS; Id++)
-Meal.compare()
-// Do not compare with itself!!!
+    // Do not compare with itself
+    if (Id != _NextMealId)
+      // If Id comes sooner than _NextMealId
+      if (_Meals[_NextMealId].compare(_Meals[Id], _LastCheck))
+        // We have a new earliest Meal -> update
+        _NextMealId = Id;
 }

@@ -17,11 +17,20 @@ class Feeds
 public:
   static const uint8_t NUM_MEALS = 4U;
 
+  enum Next_t: int8_t
+  {
+    NEXT_NONE = -1,
+    NEXT_OK   = 0,
+    NEXT_SKIP = 1
+  };
+
   Feeds();
   void init(const DateTime &Now);
   uint8_t check(const DateTime &Now);
   void skipNext();
-  bool nextTime(const DateTime &Now, uint8_t *pHour, uint8_t *pMin) const;
+  void unskipNext();
+  bool isSkippingNext() const;
+  Next_t timeOfNext(uint8_t *pHour, uint8_t *pMinute) const;
   Meal getMeal(uint8_t Id) const;
   void setMeal(const DateTime &Now, uint8_t Id, const Meal &NewMeal);
 
@@ -35,10 +44,10 @@ protected:
 
   Meal _Meals[NUM_MEALS];
   bool _SkipNextMeal;
-  uint8_t _NextFeedId;
+  uint8_t _NextMealId;
   DateTime _LastCheck;
 
-  void _updateNext(const DateTime &Now);
+  void _updateNext();
 };
 
 #endif  // _FEEDS_H_
