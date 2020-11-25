@@ -47,7 +47,7 @@ Clock::Clock(int32_t TzDiff, bool EnableDst):
  *   Initializes RTC in the class and check that it runs properly.
  *  Returns: true iff an error was found.
  */
-bool Clock::init() const
+bool Clock::init()
 {
   return !_Rtc.begin() || !_Rtc.isrunning();
 }
