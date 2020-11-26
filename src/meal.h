@@ -25,7 +25,10 @@ public:
   void getDotw(bool pDotwArray[]) const;
   uint8_t getQuantity() const;
   bool isEnabled() const;
-  bool compare(const Meal &OtherMeal, const DateTime &TimeRef) const;
+  bool isBetween(const DateTime &StartTime, const DateTime &EndTime) const;
+  bool compare(const Meal &OtherMeal, const DateTime &TimeRef, TimeSpan *pSpan)
+    const;
+  bool matchesTime(const DateTime &Time) const;
   bool saveEeprom() const;
   bool loadEeprom();
 

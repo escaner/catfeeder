@@ -159,11 +159,17 @@ bool Meal::isEnabled() const
  *   Compares two this meal with another one and returns which is the next
  *  one in reference to a given time.
  *   Note: assumes that both meals are enabled!
+ *  Parameters:
+ *  * OtherMeal: this Meal will be compared with Other Meal
+ *  * TimeRef: absolute time reference for the next meal
+ *  * Span: return here the time from TimeRef to the first meal of the two
  *  Returns: true iff OtherMeal is earlier than this Meal; false if this
  *  Meal is earlier or at the same time.
  */
-bool Meal::compare(const Meal &OtherMeal, const DateTime &TimeRef) const
+bool Meal::compare(const Meal &OtherMeal, const DateTime &TimeRef,
+  TimeSpan *pSpan) const
 {
+  bool OtherFirst;  // Whether OtherMeal arrives before this Meal
   uint8_t RefDotw, RefHour, RefMinute;  // Reference day of the week & time
   uint8_t ThisDotw, OtherDotw;
   TimeSpan ThisSpan, OtherSpan;
@@ -181,8 +187,21 @@ bool Meal::compare(const Meal &OtherMeal, const DateTime &TimeRef) const
   ThisSpan = _timeDifference(RefDotw, RefHour, RefMinute);
   OtherSpan = OtherMeal._timeDifference(RefDotw, RefHour, RefMinute);
 
-  // false when this meal is earlier or at the same time
-  return ThisSpan.totalseconds() > OtherSpan.totalseconds();
+  // Which one is earlier?
+  if (ThisSpan.totalseconds() > OtherSpan.totalseconds())
+  {
+    // OtherMeal is earlier
+    *pSpan = OtherSpan;
+    OtherFirst = true;
+  }
+  else
+  {
+    // This Meal is earlier
+    *pSpan = ThisSpan;
+    OtherFirst = false;
+  }
+
+  return OtherFirst;
 }
 
 
@@ -224,7 +243,7 @@ bool Meal::loadEeprom()
 
 /*
  *   Finds the day of the week for the next occurrence of this meal
- *  after the reference time and day of the week.
+ *  after (but not equeal) the reference time and day of the week.
  *  Parameters:
  *  * RefDotw: reference day of the week
  *  * RefHour: reference hour
@@ -240,10 +259,10 @@ uint8_t Meal::_nextOccurrenceDotw(uint8_t RefDotw, uint8_t RefHour,
   // Start with reference day of the week
   MealDotw = RefDotw;
 
-  // If this meal has reference day of the week enabled and time is equal or
-  // later we have found its next occurrence...
+  // If this meal has reference day of the week enabled and time is later
+  // (but not equal) we have found its next occurrence...
   if (!(bitRead(_Meal.Dotw, MealDotw) &&
-      (_Meal.Hour>RefHour || _Meal.Hour==RefHour && _Meal.Minute>=RefMinute)))
+      (_Meal.Hour>RefHour || _Meal.Hour==RefHour && _Meal.Minute>RefMinute)))
   {
     // ... otherwise, keep looking up to one week later
     for (_incrDotw(MealDotw, 1); MealDotw!=RefDotw; MealDotw = _incrDotw(MealDotw, 1))

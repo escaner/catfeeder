@@ -7,8 +7,9 @@
  *   Constructor.
  */
 Feeds::Feeds():
-  _SkipNextMeal(false),
-  _NextMealId(_ID_NULL)
+  _NextMealId(_ID_NULL),
+  _NextMealDealt(false),
+  _SkipNextMeal(false)
 {
   int Addr;
   uint8_t Id;
@@ -47,9 +48,26 @@ void Feeds::init(const DateTime &Now)
       _Meals[Id].loadEeprom();
   }
 
-  // Initialize last check time with current time and set next (first) meal
-  _LastCheck = Now;
-  _updateNext();
+  // Set next (first) meal
+  _updateNext(Now);
+}
+
+
+/*
+ *   Reset the object with a new current time. All meals until it will be
+ *  skipped, next meal is re-calculated and the skip next meal status is also
+ *  disabled.
+ *  Parameters:
+ *  * Now: current time; next feed will be the first found after this time.
+ */
+void Feeds::reset(const DateTime &Now)
+{
+  _SkipNextMeal = false;
+  _NextMealDealt = false;
+
+  // Calcule next meal again
+  _NextMealId = _ID_NULL;
+  _updateNext(Now);
 }
 
 
@@ -61,18 +79,47 @@ void Feeds::init(const DateTime &Now)
  */
 uint8_t Feeds::check(const DateTime &Now)
 {
-  uint8_t Quantity;
+  uint8_t Quantity = 0U;
+  const Meal *pMeal;
 
   // Is there a next feed?
   if (_NextMealId != _ID_NULL)
   {
-    // Check that deliver time has passed
-    // if (bit(Now.dayOfTheWeek()) & _Meals[_NextMealId
-     Check that meal should not be skipped or skip it
+    // First we check if the next meal needs to be reset. This happens when
+    // this is the first call after (not matching time of) a meal that has
+    // already been dealt with
+    if (_NextMealDealt && !_Meals[_NextMealId].matchesTime(Now))
+      // Reset changes _NextMealId, _NextMealDealt & _SkipNextMeal
+      reset(Now);
+
+    // Once next meal is reset (or not), check normally
+    // Even if when reset, we know that there is at least one meal available:
+    // the very dealt meal in one week time, so assert it:
+    assert(_NextMealId != _ID_NULL);
+
+    pMeal = _Meals + _NextMealId;
+
+    // Does next meal match the current day and time?
+    if (pMeal->matchesTime(Now))
+      if (!_NextMealDealt)
+      {
+        // First time matching the meal time, deal with it
+        _NextMealDealt = true;
+
+        if (!_SkipNextMeal)
+          Quantity = pMeal->getQuantity();
+        // else: skip it, Quantity = 0
+      }
+      // else: already checked this very minute, Quantity = 0
+    else
+    {
+      // Because we already checked this and did a reset() in that case
+      assert(!_NextMealDealt);  
+
+      // Times are different -> Quantity = 0
+    }
   }
-  else
-    // No next feed time programmed -> do not deliver food
-    Quantity = 0U;
+  // else: no meals active -> Quantity = 0
 
   return Quantity;
 }
@@ -93,7 +140,7 @@ void Feeds::skipNext()
 /*
  *   Deactivates the skip for the next programmed meal.
  */
-void Feeds::skipNext()
+void Feeds::unskipNext()
 {
   _SkipNextMeal = false;
 }
@@ -111,6 +158,7 @@ bool Feeds::isSkippingNext() const
 /*
  *   Returns the time for next meal if any is programmed.
  *  Parameters:
+ *  * pDotw: reutrn here the day of the week for the next meal (Sunday == 0).
  *  * pHour: return here the hour fraction for the next meal when not NEXT_NONE.
  *  * pMinute: return here the minute fraction for the next meal when not
  *    NEXT_NONE.
@@ -119,7 +167,8 @@ bool Feeds::isSkippingNext() const
  *  * NEXT_OK: returns time for the next meal, which will be served.
  *  * NEXT_SKIP: returns time for the next meal, but it is marked to be skipped.
  */
-Feeds::Next_t Feeds::timeOfNext(uint8_t *pHour, uint8_t *pMinute) const
+Feeds::Next_t Feeds::timeOfNext(uint8_t *pDotw, uint8_t *pHour,
+  uint8_t *pMinute) const
 {
   Next_t NextFeed;
 
@@ -134,6 +183,7 @@ Feeds::Next_t Feeds::timeOfNext(uint8_t *pHour, uint8_t *pMinute) const
 
     // Fill time both for OK and SKIP
     _Meals[_NextMealId].getTime(pHour, pMinute);
+    *pDotw = _NextMealDotw;
   }
 
   return NextFeed;
@@ -155,8 +205,19 @@ Meal Feeds::getMeal(uint8_t Id) const
 }
 
 
-void setMeal(const DateTime &Now, uint8_t Id, const Meal &NewMeal)
+/*
+ *   A meal data has changed. This method updates it and then resets the
+ *  object, skipping to the new time without dispensing any meal and
+ *  the skip next meal flag is disabled.
+ */
+void Feeds::setMeal(const DateTime &Now, uint8_t Id, const Meal &NewMeal)
+{
+  // Update the meal
+  _Meals[Id] = NewMeal;
 
+  // Reset object skipping to the Now time
+  reset(Now);
+}
 
 
 /*
@@ -165,8 +226,10 @@ void setMeal(const DateTime &Now, uint8_t Id, const Meal &NewMeal)
  *  Parameters:
  *  * Now: current time in official 24h format.
  */
-void Feeds::_updateNext()
+void Feeds::_updateNext(const DateTime &Now)
 {
+  DateTime NextMealTime;
+  TimeSpan NextMealSpan;
   uint8_t Id;
 
   // When we have no next meal selected, find first active meal
@@ -179,7 +242,16 @@ void Feeds::_updateNext()
     // Do not compare with itself
     if (Id != _NextMealId)
       // If Id comes sooner than _NextMealId
-      if (_Meals[_NextMealId].compare(_Meals[Id], _LastCheck))
+      if (_Meals[_NextMealId].compare(_Meals[Id], Now, &NextMealSpan))
         // We have a new earliest Meal -> update
         _NextMealId = Id;
+
+  // If we found a winner, calculate its DOTW
+  if (_NextMealId != _ID_NULL)
+  {
+    // Casting needed because DateTime::operator+ is incorrectly declared
+    // without const
+    NextMealTime = (DateTime &) Now + NextMealSpan;
+    _NextMealDotw = NextMealTime.dayOfTheWeek();
+  }
 }
