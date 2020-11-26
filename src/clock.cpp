@@ -6,22 +6,7 @@
 /*************/
 
 // Difference in seconds between standard and daylight saving times
-const TimeSpan Clock::DST_DIFFERENCE(60*60);
-const uint8_t Clock::DAYS_IN_A_WEEK = 7U;
-
-// DST range
-const uint8_t Clock::DST_START_MONTH = 3U;  // March
-const uint8_t Clock::DST_START_MONTH_LAST_DAY = 31U;
-const uint8_t Clock::DST_START_DOW = 0U;  // Sunday
-const uint8_t Clock::DST_START_H = 0U;
-const uint8_t Clock::DST_START_M = 0U;
-const uint8_t Clock::DST_START_S = 0U;
-const uint8_t Clock::DST_END_MONTH = 10U;  // October
-const uint8_t Clock::DST_END_MONTH_LAST_DAY = 31U;
-const uint8_t Clock::DST_END_DOW = 0U;  // Sunday
-const uint8_t Clock::DST_END_H = 0U;
-const uint8_t Clock::DST_END_M = 0U;
-const uint8_t Clock::DST_END_S = 0U;
+const TimeSpan Clock::_DST_DIFFERENCE(60*60);
 
 
 /***********/
@@ -95,7 +80,7 @@ DateTime Clock::_utcToOfficial(DateTime UtcTime) const
   DateTime OfficialTime;
 
   if (_inDst(UtcTime))
-    OfficialTime = UtcTime + _Timezone + DST_DIFFERENCE;
+    OfficialTime = UtcTime + _Timezone + _DST_DIFFERENCE;
   else
     OfficialTime = UtcTime + _Timezone;
 
@@ -122,16 +107,16 @@ bool Clock::_inDst(const DateTime &UtcTime) const
   {
     Year = UtcTime.year();
     // Make DST start: last Sunday March 01:00
-    StartDay = _getLastDowOfMonth(Year, DST_START_MONTH,
-      DST_START_MONTH_LAST_DAY, DST_START_DOW);
-    StartTime = DateTime(Year, DST_START_MONTH, StartDay, DST_START_H,
-      DST_START_M, DST_START_S);
+    StartDay = _getLastDowOfMonth(Year, _DST_START_MONTH,
+      _DST_START_MONTH_LAST_DAY, _DST_START_DOW);
+    StartTime = DateTime(Year, _DST_START_MONTH, StartDay, _DST_START_H,
+      _DST_START_M, _DST_START_S);
 
     // Make DST end: last Sunday October 01:00
-    EndDay = _getLastDowOfMonth(Year, DST_END_MONTH, DST_END_MONTH_LAST_DAY,
-      DST_END_DOW);
-    EndTime = DateTime(Year, DST_END_MONTH, EndDay, DST_END_H,
-      DST_END_M, DST_END_S);
+    EndDay = _getLastDowOfMonth(Year, _DST_END_MONTH, _DST_END_MONTH_LAST_DAY,
+      _DST_END_DOW);
+    EndTime = DateTime(Year, _DST_END_MONTH, EndDay, _DST_END_H,
+      _DST_END_M, _DST_END_S);
 
     Dst = UtcTime >= StartTime && UtcTime < EndTime;
   }
@@ -164,7 +149,7 @@ uint8_t Clock::_getLastDowOfMonth(uint16_t Year, uint8_t Month,
 
   // Calculate the difference in days with the required day of the week
   if (LastDomDow < Dow)
-    LastDomDow += DAYS_IN_A_WEEK;  // Avoid the overflow
+    LastDomDow += _DAYS_IN_A_WEEK;  // Avoid the overflow
   DiffDays = LastDomDow - Dow;
 
   // Get the actual day of the month

@@ -21,20 +21,22 @@ public:
 
 protected:
   // Constants
-  static const TimeSpan DST_DIFFERENCE;
-  static const uint8_t DAYS_IN_A_WEEK;
-  static const uint8_t DST_START_MONTH;
-  static const uint8_t DST_START_MONTH_LAST_DAY;
-  static const uint8_t DST_START_DOW;
-  static const uint8_t DST_START_H;
-  static const uint8_t DST_START_M;
-  static const uint8_t DST_START_S;
-  static const uint8_t DST_END_MONTH;
-  static const uint8_t DST_END_MONTH_LAST_DAY;
-  static const uint8_t DST_END_DOW;
-  static const uint8_t DST_END_H;
-  static const uint8_t DST_END_M;
-  static const uint8_t DST_END_S;
+  static const TimeSpan _DST_DIFFERENCE;
+  static const uint8_t _DAYS_IN_A_WEEK = 7U;
+
+  // DST range, UTC times
+  static const uint8_t _DST_START_MONTH = 3U;  // March
+  static const uint8_t _DST_START_MONTH_LAST_DAY = 31U;
+  static const uint8_t _DST_START_DOW = 0U;  // Sunday
+  static const uint8_t _DST_START_H = 1U;
+  static const uint8_t _DST_START_M = 0U;
+  static const uint8_t _DST_START_S = 0U;
+  static const uint8_t _DST_END_MONTH = 10U;  // October
+  static const uint8_t _DST_END_MONTH_LAST_DAY = 31U;
+  static const uint8_t _DST_END_DOW = 0U;  // Sunday
+  static const uint8_t _DST_END_H = 1U;
+  static const uint8_t _DST_END_M = 0U;
+  static const uint8_t _DST_END_S = 0U;
 
   // Member data
   TimeSpan _Timezone;
