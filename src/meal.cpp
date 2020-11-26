@@ -206,6 +206,25 @@ bool Meal::compare(const Meal &OtherMeal, const DateTime &TimeRef,
 
 
 /*
+ *   Checks whether this Meal programmed time and days of the week match
+ *  a reference Time.
+ *  Parameters:
+ *  * Time: reference time for the comparison.
+ *  Returns:
+ *  * true: iff the Meal is enabled for the day of the week, hour
+ *  and minute of Time.
+ *  * false: otherwise
+ */
+bool Meal::matchesTime(const DateTime &Time) const
+{
+  return
+    Time.hour() == _Meal.Hour &&
+    Time.minute() == _Meal.Minute &&
+    bitRead(_Meal.Dotw, Time.dayOfTheWeek());
+}
+
+
+/*
  *   Saves current object into Arduino EEPROM memory at the address assigned
  *  to this object.
  *   Return: true iff the address has not been initialized or is not valid.

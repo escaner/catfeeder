@@ -25,7 +25,6 @@ public:
   void getDotw(bool pDotwArray[]) const;
   uint8_t getQuantity() const;
   bool isEnabled() const;
-  bool isBetween(const DateTime &StartTime, const DateTime &EndTime) const;
   bool compare(const Meal &OtherMeal, const DateTime &TimeRef, TimeSpan *pSpan)
     const;
   bool matchesTime(const DateTime &Time) const;
@@ -36,17 +35,6 @@ protected:
   static const uint8_t _DAYS_IN_A_WEEK = 7U;
   static const uint8_t _HOURS_IN_A_DAY = 24U;
   static const uint8_t _MINUTES_IN_AN_HOUR = 60U;
-
-  enum DotwPinMask: byte
-  {
-    MON = bit(0),
-    TUE = bit(1),
-    WED = bit(2),
-    THU = bit(3),
-    FRI = bit(4),
-    SAT = bit(5),
-    SUN = bit(6)
-  };
 
   struct Meal_t
   {
