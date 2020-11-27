@@ -29,7 +29,7 @@ static const uint8_t PIN_LCD_D7 = A0;
 // RTC
 static const uint8_t PIN_RTC_SDA = A4;
 static const uint8_t PIN_RTC_SCL = A5;
-// EasyDriver
+// EasyDriver with stepper motor
 static const uint8_t PIN_ED_ENABLE = 8;
 static const uint8_t PIN_ED_MS1 = 6;
 static const uint8_t PIN_ED_MS2 = 7;

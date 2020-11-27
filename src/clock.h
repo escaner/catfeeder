@@ -39,8 +39,8 @@ protected:
   static const uint8_t _DST_END_S = 0U;
 
   // Member data
-  TimeSpan _Timezone;
-  bool _DstEnabled;
+  const TimeSpan _Timezone;
+  const bool _DstEnabled;
   RTC_DS1307 _Rtc;
 
   // Methods
