@@ -15,11 +15,13 @@ public:
   // Event that can be returned regarding the switch user input
   enum Event: uint8_t
   {
-    EvNone=0,     // No input event
-    EvSelectCcw,  // Counterclockwise event on the Select encoder
-    EvSelectCw,   // Clockwise event on the Select encoder
-    EvEnter,      // Enter button event (Select button pressed)
-    EvBack        // Back button event
+    EvNone=0,        // No input event
+    EvSelectCcw,     // Counterclockwise event on the Select encoder
+    EvSelectCw,      // Clockwise event on the Select encoder
+    EvEnterPress,    // Enter button press event (Select button pressed)
+    EvEnterRelease,  // Enter button release event (Select button released)
+    EvBackPress,     // Back button press event
+    EvBackRelease    // Back button release event
    };
 
   // Public methods

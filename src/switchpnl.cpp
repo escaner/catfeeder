@@ -44,6 +44,7 @@ SwitchPnl::Event SwitchPnl::check()
 {
   uint8_t Val0, Val1;
   int8_t StepSelect;
+  Switch::Flank Flank;
 
   // Check Select encoder
   Val0 = digitalRead(_PinSelectA);
@@ -53,13 +54,23 @@ SwitchPnl::Event SwitchPnl::check()
 
   // Check Enter button: falling flank is button press
   Val0 = digitalRead(_PinEnter);
-  if (_Enter.updateFlank(Val0) == Switch::FLANK_FALLING)
-    return EvEnter;
+  switch (_Enter.updateFlank(Val0))
+  {
+  case Switch::FLANK_FALLING:
+    return EvEnterPress;
+  case Switch::FLANK_RISING:
+    return EvEnterRelease;
+  }
 
   // Check Back button: falling flank is button press
   Val0 = digitalRead(_PinBack);
-  if (_Back.updateFlank(Val0) == Switch::FLANK_FALLING)
-    return EvBack;
+  switch (_Back.updateFlank(Val0))
+  {
+  case Switch::FLANK_FALLING:
+    return EvBackPress;
+  case Switch::FLANK_RISING:
+    return EvBackRelease;
+  }
   
   return EvNone;
 }
