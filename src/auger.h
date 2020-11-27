@@ -32,7 +32,7 @@ protected:
 
   void _enableMotor() const;
   void _disableMotor() const;
-  void _turn(uint16_t NumSteps) const;
+  void _turnMotor(uint16_t NumSteps) const;
 };
 
 #endif  // _AUGER_H_

@@ -39,7 +39,7 @@ Auger::Auger(uint8_t PinStep, uint8_t PinDir, uint8_t PinMs1, uint8_t PinMs2,
   pinMode(PinEnable, OUTPUT);
 
   // Prepare EasyDriver controller
-  digitalWrite(PinEnable, LOW);
+  digitalWrite(PinEnable, HIGH);
   digitalWrite(PinStep, LOW);
   digitalWrite(PinDir, _DIRECTION);
   digitalWrite(PinMs1, LOW);
@@ -65,7 +65,7 @@ void Auger::feed(uint8_t Quantity) const
   _enableMotor();
 
   // Deliver the food turning the motor
-  _turn(Steps);
+  _turnMotor(Steps);
  
   // Save power
   _disableMotor();
@@ -87,7 +87,7 @@ void Auger::startFeeding() const
  */
 void Auger::keepFeeding() const
 {
-  _turn(_STEPS_CONTINUOUS_FEED);
+  _turnMotor(_STEPS_CONTINUOUS_FEED);
 }
 
 
@@ -101,11 +101,29 @@ void Auger::endFeeding() const
 
 
 /*
+ *   Powers up the motor.
+ */
+void Auger::_enableMotor() const
+{
+  digitalWrite(_PinEnable, LOW);
+}
+
+
+/*
+ *   Powers down the motor.
+ */
+void Auger::_disableMotor() const
+{
+  digitalWrite(_PinEnable, HIGH);
+}
+
+
+/*
  *   Turns the motor (auger)
  *   Parameters:
  *   * NumSteps: how many steps the motor will be turned
  */
-void Auger::_turn(uint16_t NumSteps) const
+void Auger::_turnMotor(uint16_t NumSteps) const
 {
   while (--NumSteps)
   {
