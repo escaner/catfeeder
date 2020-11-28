@@ -40,7 +40,7 @@ void SwitchPnl::init() const
  *   Reads status of switches pins and returns an Event when changes are
  *  detected.
  */
-SwitchPnl::Event SwitchPnl::check()
+Event::SwitchEvent SwitchPnl::check()
 {
   uint8_t Val0, Val1;
   int8_t StepSelect;
@@ -50,16 +50,16 @@ SwitchPnl::Event SwitchPnl::check()
   Val0 = digitalRead(_PinSelectA);
   Val1 = digitalRead(_PinSelectB);
   if (StepSelect = _Select.update(Val0, Val1))
-    return StepSelect < 0? EvSelectCcw: EvSelectCw;
+    return StepSelect < 0? Event::SwEvSelectCcw: Event::SwEvSelectCw;
 
   // Check Enter button: falling flank is button press
   Val0 = digitalRead(_PinEnter);
   switch (_Enter.updateFlank(Val0))
   {
   case Switch::FLANK_FALLING:
-    return EvEnterPress;
+    return Event::SwEvEnterPress;
   case Switch::FLANK_RISING:
-    return EvEnterRelease;
+    return Event::SwEvEnterRelease;
   }
 
   // Check Back button: falling flank is button press
@@ -67,10 +67,10 @@ SwitchPnl::Event SwitchPnl::check()
   switch (_Back.updateFlank(Val0))
   {
   case Switch::FLANK_FALLING:
-    return EvBackPress;
+    return Event::SwEvBackPress;
   case Switch::FLANK_RISING:
-    return EvBackRelease;
+    return Event::SwEvBackRelease;
   }
   
-  return EvNone;
+  return Event::SwEvNone;
 }

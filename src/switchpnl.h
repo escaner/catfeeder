@@ -3,6 +3,7 @@
 
 #include <REncoder.h>
 #include <Switch.h>
+#include "event.h"
 
 
 /*
@@ -12,23 +13,11 @@
 class SwitchPnl
 {
 public:
-  // Event that can be returned regarding the switch user input
-  enum Event: uint8_t
-  {
-    EvNone=0,        // No input event
-    EvSelectCcw,     // Counterclockwise event on the Select encoder
-    EvSelectCw,      // Clockwise event on the Select encoder
-    EvEnterPress,    // Enter button press event (Select button pressed)
-    EvEnterRelease,  // Enter button release event (Select button released)
-    EvBackPress,     // Back button press event
-    EvBackRelease    // Back button release event
-   };
-
   // Public methods
   SwitchPnl(uint8_t PinSelectA, uint8_t PinSelectB, uint8_t PinEnter,
     uint8_t PinBack);
   void init() const;
-  Event check();
+  Event::SwitchEvent check();
 
 protected:
   uint8_t _PinSelectA, _PinSelectB;  // Pins used by rotary encoder Select
