@@ -32,7 +32,6 @@ public:
   bool loadEeprom();
 
 protected:
-  static const uint8_t _DAYS_IN_A_WEEK = 7U;
   static const uint8_t _HOURS_IN_A_DAY = 24U;
   static const uint8_t _MINUTES_IN_AN_HOUR = 60U;
 
@@ -51,27 +50,7 @@ protected:
     uint8_t RefMinute) const;
   TimeSpan _timeDifference(uint8_t RefDotw, uint8_t RefHour,
     uint8_t RefMinute) const;
-  static inline uint8_t _incrDotw(uint8_t &Dotw, uint8_t Increment);
 };
 
-
-/******************/
-/* Inline methods */
-/******************/
-
-/*
- *   Performs day of the week increment (addition) operation.
- *  Parameters:
- *  * Dotw: day of the week [0,6].
- *  * Increment: number of days to add.
- *  Returns the calculated new day of the week [0,6]
- */
-uint8_t Meal::_incrDotw(uint8_t &Dotw, uint8_t Increment)
-{
-  Dotw += Increment;
-  Dotw %= _DAYS_IN_A_WEEK;
-
-  return Dotw;
-}
 
 #endif  // _MEAL_H_

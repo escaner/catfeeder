@@ -11,7 +11,7 @@
 class PgMain: public Page
 {
 public:
-  PgMain(LiquidCrystal &Lcd);
+  PgMain(LiquidCrystal &Lcd, uint8_t Cols, uint8_t Rows);
   virtual PageAction draw();
   virtual PageAction event(const Event &E);
 
@@ -22,6 +22,11 @@ protected:
     StNeedTime = 1U,
     StNeedNextMeal = 2U
   };
+
+  static const uint8_t _TIME_COL = 0U;
+  static const uint8_t _TIME_ROW = 0U;
+  static const uint8_t _NEXTMEAL_COL = 0U;
+  static const uint8_t _NEXTMEAL_ROW = 1U;
 
   // Protected methods
   void _drawTime(const DateTime &Time) const;

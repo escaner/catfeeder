@@ -23,7 +23,7 @@ protected:
 
   // Member data
   LiquidCrystal _Lcd;  // LCD control class
-  PgMain _PgMain;        // Main page
+  PgMain _PgMain;      // Main page
   Page *_pFocusPage;   // Page currently having the focus to pass events
 };
 

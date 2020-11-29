@@ -22,7 +22,6 @@ public:
 protected:
   // Constants
   static const TimeSpan _DST_DIFFERENCE;
-  static const uint8_t _DAYS_IN_A_WEEK = 7U;
 
   // DST range, UTC times
   static const uint8_t _DST_START_MONTH = 3U;  // March

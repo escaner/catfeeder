@@ -1,4 +1,5 @@
 #include "clock.h"
+#include "dotwtext.h"
 
 
 /*************/
@@ -149,7 +150,7 @@ uint8_t Clock::_getLastDowOfMonth(uint16_t Year, uint8_t Month,
 
   // Calculate the difference in days with the required day of the week
   if (LastDomDow < Dow)
-    LastDomDow += _DAYS_IN_A_WEEK;  // Avoid the overflow
+    LastDomDow += DotwText::DAYS_IN_A_WEEK;  // Avoid the overflow
   DiffDays = LastDomDow - Dow;
 
   // Get the actual day of the month

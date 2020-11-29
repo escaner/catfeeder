@@ -19,7 +19,7 @@ public:
   // Type of the event structure
   enum EventId: uint8_t
   {
-    EvInit,  // Initialize, first draw of stuff
+    EvInit,  // Initialize, first draw
     EvSwitch,
     EvTime,
     EvMeal,

@@ -26,11 +26,11 @@ public:
     AcNeedMeal,
     AcSetTime,
     AcSetMeal,
-    ManualFeedStart,
-    ManualFeedContinue,
-    ManualFeedEnd,
-    SkipMeal,
-    UnskipMeal
+    AcManualFeedStart,
+    AcManualFeedContinue,
+    AcManualFeedEnd,
+    AcSkipMeal,
+    AcUnskipMeal
   };
 
   struct Meal_t
@@ -43,6 +43,23 @@ public:
   Action(): Id(AcNone) {}
   Action(ActionId AcId): Id(AcId) {}
 
+  // Copy constructor
+  Action(const Action &Ac):
+    Id(Ac.Id)
+  {
+    switch (Id)
+    {
+    case AcNeedMeal:
+    case AcSetMeal:
+      Meal = Ac.Meal;
+      break;
+    case AcSetTime:
+      Time = Ac.Time;
+      break;
+    }
+  }
+
+
   /***************/
   /* Member data */
   /***************/
@@ -50,8 +67,8 @@ public:
   ActionId Id;
   union
   {
-    Meal_t Meal;    // Used by NeedMeal, SetMeal
-    DateTime Time;  // Used by SetTime
+    Meal_t Meal;    // Used by AcNeedMeal, AcSetMeal
+    DateTime Time;  // Used by AcSetTime
   };
 };
 

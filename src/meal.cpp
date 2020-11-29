@@ -1,13 +1,7 @@
 #include <assert.h>
 #include <EEPROM.h>
 #include "meal.h"
-
-
-/*************/
-/* Constants */
-/*************/
-
-const uint8_t Meal::_DAYS_IN_A_WEEK = 7U;
+#include "dotwtext.h"
 
 
 /***********/
@@ -65,7 +59,7 @@ void Meal::setTime(uint8_t Hour, uint8_t Minute)
  */
 void Meal::setDotw(const bool pDotwArray[])
 {
-  uint8_t Idx = _DAYS_IN_A_WEEK;
+  uint8_t Idx = DotwText::DAYS_IN_A_WEEK;
   byte Dotw = 0U;
 
   // Pack array of 7 bools into a byte
@@ -124,7 +118,7 @@ void Meal::getDotw(bool pDotwArray[]) const
   byte Dotw = _Meal.Dotw;
 
   // Unack byte of 7 DOTW bits into array of 7 bools.
-  for (Idx = 0U; Idx<_DAYS_IN_A_WEEK; Idx++)
+  for (Idx = 0U; Idx<DotwText::DAYS_IN_A_WEEK; Idx++)
   {
     // Get bit and store it as bool
     pDotwArray[Idx] = (bool) (Dotw & 0b1);
@@ -284,7 +278,8 @@ uint8_t Meal::_nextOccurrenceDotw(uint8_t RefDotw, uint8_t RefHour,
       (_Meal.Hour>RefHour || _Meal.Hour==RefHour && _Meal.Minute>RefMinute)))
   {
     // ... otherwise, keep looking up to one week later
-    for (_incrDotw(MealDotw, 1); MealDotw!=RefDotw; MealDotw = _incrDotw(MealDotw, 1))
+    for (DotwText::incr(MealDotw, 1); MealDotw!=RefDotw;
+         DotwText::incr(MealDotw, 1))
       // If this day of the week is enabled, any time is good: found
       if (bitRead(_Meal.Dotw, MealDotw))
         break;
@@ -341,7 +336,7 @@ TimeSpan Meal::_timeDifference(uint8_t RefDotw, uint8_t RefHour,
   // Day difference
   if (MealDotw < RefDotw)
     // Avoid negative overflow, delay meal a week
-    MealDotw += _DAYS_IN_A_WEEK;
+    MealDotw += DotwText::DAYS_IN_A_WEEK;
   Days = MealDotw - RefDotw;
     
   return TimeSpan(Days, Hours, Minutes, 0U);
