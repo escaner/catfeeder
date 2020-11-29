@@ -10,7 +10,7 @@ const char PgConfig::_LINES[] =
 {
   " SALTAR  NO SALT",
   " HORA    COMIDAS"
-}
+};
 
 
 /***********/
@@ -26,7 +26,7 @@ PgConfig::PgConfig(Page *pParent, LiquidCrystal &Lcd, uint8_t Cols,
     uint8_t Rows):
   Page(Lcd, Cols, Rows),
   _pParent(pParent),
-  _Select(_NUM_OPTIONS)
+  _Select(Lcd, Cols, Rows, true)
 {
 }
 
@@ -76,7 +76,7 @@ PageAction PgConfig::event(const Event &E)
   case 3:
     // Go to config time page
     return PageAction(&_PgTime);
-  case Widget::EvBack:
+  case Widget::AcBack:
     // Go back to parent page
     return PageAction(_pParent);
   }

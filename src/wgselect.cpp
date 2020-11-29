@@ -5,7 +5,7 @@
 /* Static constants */
 /********************/
 
-const uint8_t WgSelect::_Coord2Op[2][2] = { {0, 0}, {0, 1} };
+const uint8_t WgSelect::_Coord2Opt[2][2] = { {0, 0}, {0, 1} };
 const uint8_t WgSelect::_Coord4Opt[4][2] = { {0, 0}, {8, 0}, {0, 1}, {8, 1} };
 
 
