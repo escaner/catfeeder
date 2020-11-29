@@ -1,7 +1,7 @@
 #ifndef _PGMAIN_H_
 #define _PGMAIN_H_
 
-#include "page.h"
+#include "pgconfig.h"
 
 
 /*
@@ -12,7 +12,7 @@ class PgMain: public Page
 {
 public:
   PgMain(LiquidCrystal &Lcd, uint8_t Cols, uint8_t Rows);
-  virtual PageAction draw();
+  virtual PageAction focus();
   virtual PageAction event(const Event &E);
 
 protected:
@@ -27,6 +27,8 @@ protected:
   static const uint8_t _TIME_ROW = 0U;
   static const uint8_t _NEXTMEAL_COL = 0U;
   static const uint8_t _NEXTMEAL_ROW = 1U;
+  static const char _LINES[];
+  static const char _SKIP_TEXT[];
 
   // Protected methods
   void _drawTime(const DateTime &Time) const;
@@ -35,7 +37,7 @@ protected:
   // Member data
   State_t _State;
   bool _ManFeeding;  // Lock page switch while manual feeding happens
-  // PgConfig _PgConfig;
+  PgConfig _PgConfig;
 };
 
 #endif  // _PGMAIN_H_

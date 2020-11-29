@@ -3,13 +3,38 @@
 #include "dotwtext.h"
 
 
+/********************/
+/* Member constants */
+/********************/
+
+// Text to display in the page
+const char PgMain::_LINES[] =
+{
+  "%02hhu:%02hhu %c %02hhu/%02hhu/%02hhu",
+  "SGTE %c%02hhu:%02hhu %s"
+};
+
+// Skip condition text. 0 -> no skip; 1 -> skip
+const char PgMain::_SKIP_TEXT[] =
+{
+  "     ",
+  "SALTA"
+};
+
+
+/***********/
+/* Methods */
+/***********/
 /*
  *   Constructor.
  *  Paramters:
  *  * Lcd: reference to the lcd display that is being used.
+ *  * Cols: number of columns in the LCD.
+ *  * Rows: number of rows in the LCD.
  */
 PgMain::PgMain(LiquidCrystal &Lcd, uint8_t Cols, uint8_t Rows):
   Page(Lcd, Cols, Rows),
+  _PgConfig(this, Lcd, Cols, Rows),
   _State(StOk),
   _ManFeeding(false)
 {
@@ -24,7 +49,7 @@ PgMain::PgMain(LiquidCrystal &Lcd, uint8_t Cols, uint8_t Rows):
  *  * PageAction requesting the current official time or no action when
  *    the process was already unchained and not finished.
  */
-PageAction PgMain::draw()
+PageAction PgMain::focus()
 {
   // Only makes sense at StOk
   if (_State == StOk)
@@ -36,6 +61,7 @@ PageAction PgMain::draw()
 
   return PageAction();
 }
+
 
 /*
  *   Manage events received my main page.
@@ -50,7 +76,7 @@ PageAction PgMain::event(const Event &E)
   {
   case Event::EvInit:
     // Initialize: display page for the first time
-    return draw();
+    return focus();
 
   case Event::EvSwitch:  // Switch has been pressed / released / something.
     // Are we manually feeding?
@@ -82,7 +108,7 @@ PageAction PgMain::event(const Event &E)
     break;
 
   case Event::EvTime:
-    // Check if we requested it from draw()
+    // Check if we requested it from focus()
     if (_State == StNeedTime)
       // Yes, advance state
       _State = StNeedNextMeal;
@@ -92,7 +118,7 @@ PageAction PgMain::event(const Event &E)
     return PageAction(Action::AcNeedNextMeal);
 
   case Event::EvNextMeal:
-    // Check if we requested it, unchained from draw()
+    // Check if we requested it, unchained from focus()
     if (_State == StNeedNextMeal)
       // Yes, all data received
       _State = StOk;
@@ -127,13 +153,14 @@ void PgMain::_drawTime(const DateTime &Time) const
   Year = Time.year() % 100U;
 
   // Generate line to write
-  sprintf(Line, "%02hhu:%02hhu %c %02hhu/%02hhu/%02hhu",
+  sprintf(Line, _LINES[0],
     Time.hour(), Time.minute(), Dotw, Time.day(), Time.month(), Year);
   assert(strlen(Line) == _COLS);
 
   // Write line in LCD
   _Lcd.print(Line);
 }
+
 
 /*
  *   Draws Time in the LCD.
@@ -151,9 +178,8 @@ void PgMain::_drawNextMeal(const Event::NextMeal_t &NextMeal) const
 
   // Get single char representation of the day of the week
   Dotw = DotwText::DotwCharEs[NextMeal.Dotw];
-  pSkip = NextMeal.Skip? "SALTA": "    ";
-  sprintf(Line, "SGTE %c%02hhu:%02hhu %s",
-    NextMeal.Hour, NextMeal.Minute, Dotw, pSkip);
+  pSkip = _SKIP_TEXT[NextMeal.Skip? 1: 0];
+  sprintf(Line, _LINES[1], NextMeal.Hour, NextMeal.Minute, Dotw, pSkip);
   assert(strlen(Line) == _COLS);
 
   // Write line in LCD

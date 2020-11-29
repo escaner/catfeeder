@@ -38,7 +38,7 @@ public:
   }
 
   // Abstract virtual methods
-  virtual PageAction draw() = 0;
+  virtual PageAction focus() = 0;
   virtual PageAction event(const Event &E) = 0;
 
 protected:

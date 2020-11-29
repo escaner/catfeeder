@@ -8,7 +8,7 @@
 Display::Display(uint8_t PinRs, uint8_t PinEnable, uint8_t PinD4, uint8_t PinD5,
     uint8_t PinD6, uint8_t PinD7):
   _Lcd(PinRs, PinEnable, PinD4, PinD5, PinD6, PinD7),
-  _PgMain(_Lcd),
+  _PgMain(_Lcd, _COLS, _ROWS),
   _pFocusPage(&_PgMain)
 {
   _Lcd.begin(_COLS, _ROWS);
@@ -34,7 +34,7 @@ Action Display::event(const Event &E)
 
     // Update focus page and draw it
     _pFocusPage = PgA.pFocusPage;
-    PgA = _pFocusPage->draw();
+    PgA = _pFocusPage->focus();
   }
 
   // Return the standard Action
