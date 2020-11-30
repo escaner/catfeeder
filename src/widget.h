@@ -9,8 +9,8 @@ class Widget
 {
 public:
   // Standard values for actions on event() status return
-  static const int8_t AcNone = -1;
-  static const int8_t AcBack = -2;
+  static const int16_t AcNone = INT16_MIN;
+  static const int16_t AcBack = INT16_MIN+1;
 
   Widget(LiquidCrystal &Lcd, uint8_t Cols, uint8_t Rows):
     _Lcd(Lcd),
@@ -21,7 +21,7 @@ public:
 
   // Abstract virtual methods
   virtual void focus() = 0;
-  virtual int8_t event(const Event &E) = 0;
+  virtual int16_t event(const Event &E) = 0;
 
 protected:
   // Member data

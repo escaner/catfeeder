@@ -45,9 +45,9 @@ void WgSelect::focus()
  *  * EvNone: no further action required
  *  * EvBack: go back to the previous page
  */
-int8_t WgSelect::event(const Event &E)
+int16_t WgSelect::event(const Event &E)
 {
-  int8_t Ac = AcNone;  // Default action initialized
+  int16_t Ac = AcNone;  // Default action initialized
 
   // Only process switch events, ignore the rest
   if (E.Id == Event::EvSwitch)
@@ -69,7 +69,7 @@ int8_t WgSelect::event(const Event &E)
       break;
     case Event::SwEvEnterPress:
       // Return currently selected option
-      Ac = (int8_t) _CurOption;
+      Ac = (int16_t) _CurOption;
       break;
     case Event::SwEvBackPress:
       // Signal to go back
