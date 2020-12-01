@@ -1,5 +1,7 @@
+#include <functional>
 #include <cassert>
 #include "wgint.h"
+#include "timer1.h"
 
 
 /*
@@ -69,13 +71,15 @@ int16_t WgInt::event(const Event &E)
     switch (E.Switch)
     {
     case Event::SwEvSelectCw:
-      // Decrease value option
+      // Decrease value option and update LCD while blinking
       _decrement();
+      _drawBlinking();
       // Ac = AcNone;
       break;
     case Event::SwEvSelectCcw:
-      // Increase value option
+      // Increase value option and update LCD while blinking
       _increment();
+      _drawBlinking();
       // Ac = AcNone;
       break;
     case Event::SwEvEnterPress:
@@ -127,14 +131,32 @@ void WgInt::_clear() const
 
 
 /*
+ *   Draws new value in the LCD while binking.
+ */
+void WgInt::_drawBlinking() const
+{
+      // MUTEX for the interrupt protecting _BlinkClear
+      noInterrupts();
+
+      // Draw the new value only while displaying a value, not on clear
+      if (!_BlinkClear)
+        _draw();
+
+      // Exit the MUTEX
+      interrupts();
+}
+
+
+/*
  *   Enable Interrupt Service Routine to manage the blinking.
  */
 void WgInt::_blinkOn()
 {
-  // We are displaying the value
+  // We are currently displaying the value
   _BlinkClear = false;
 
-  // Enable ISR
+  // Enable ISR for blinking
+  enableIsr(std::bind(_isrBlink, this));
 }
 
 
@@ -143,12 +165,13 @@ void WgInt::_blinkOn()
  */
 void WgInt::_blinkOff()
 {
-  // Disable ISR
+  // Disable ISR for blinking
+  disableIsr();
 }
 
 
 /*
- *   Callback to make the LCD value blink.
+ *   Interrupt Service Routine to make the LCD value blink.
  */
 void WgInt::_isrBlink()
 {

@@ -23,6 +23,7 @@ protected:
   // Protected methods
   void _draw() const;
   void _clear() const;
+  void _drawBlinking() const;
   void _blinkOn();
   void _blinkOff();
   void _isrBlink();
