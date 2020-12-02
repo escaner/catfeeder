@@ -12,7 +12,7 @@ class WgSelect: public Widget
 public:
   WgSelect(LiquidCrystal &Lcd, uint8_t Cols, uint8_t Rows, bool FourOptions);
   virtual void focus();
-  virtual int16_t event(const Event &E);
+  virtual int8_t event(const Event &E);
 
 protected:
   // Cursor character

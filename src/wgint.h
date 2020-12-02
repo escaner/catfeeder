@@ -3,6 +3,7 @@
 
 #include "widget.h"
 
+
 // ISR needs to be function of type void (*)() -> cannot be defined inside class
 // because it would be defined as type void (*<class>::)(), so make it a global
 // friend function
@@ -17,10 +18,10 @@ class WgInt: public Widget
 public:
   WgInt(LiquidCrystal &Lcd, uint8_t Cols, uint8_t Rows,
     uint8_t PosX, uint8_t PosY, uint8_t Size);
-  void init(uint16_t MinValue, uint16_t MaxValue, uint16_t InitValue);
+  void init(uint16_t MinValue, uint16_t MaxValue, uint16_t *pValue);
 
   virtual void focus();
-  virtual int16_t event(const Event &E);
+  virtual int8_t event(const Event &E);
 
 protected:
   friend void _isrWgIntBlink();
@@ -30,7 +31,7 @@ protected:
   void _clear() const;
   void _drawBlinking() const;
   void _blinkOn();
-  void _blinkOff();
+  void _blinkOff() const;
   void _increment();
   void _decrement();
 
@@ -39,7 +40,7 @@ protected:
   const uint8_t _Y;     // Row where to display the widget
   const uint8_t _Size;  // Number of charaters of the widget
 
-  uint16_t _Value;     // Current value
+  uint16_t *_pValue;   // Pointer to current value where it is kept updated
   uint16_t _MinValue;  // Maximum allowed value of _Value
   uint16_t _MaxValue;  // Minimum allowed value of _Value
   volatile bool _BlinkClear;  // When blinking: true iif displaying blank phase
