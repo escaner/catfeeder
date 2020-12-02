@@ -1,4 +1,5 @@
-#include <assert.h>
+#define __ASSERT_USE_STDERR
+#include <cassert>
 #include <EEPROM.h>
 #include "meal.h"
 #include "dotwtext.h"
@@ -169,8 +170,8 @@ bool Meal::compare(const Meal &OtherMeal, const DateTime &TimeRef,
   TimeSpan ThisSpan, OtherSpan;
 
   // This makes no sense when meals have no day of the week enabled
-  assert(_Meal.Dotw!=0x00);
-  assert(OtherMeal._Meal.Dotw!=0x00);
+  assert(_Meal.Dotw != 0x00);
+  assert(OtherMeal._Meal.Dotw != 0x00);
 
   // Get reference time stuff
   RefDotw = TimeRef.dayOfTheWeek();

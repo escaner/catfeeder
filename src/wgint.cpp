@@ -1,8 +1,39 @@
-#include <functional>
+#define __ASSERT_USE_STDERR
 #include <cassert>
 #include "wgint.h"
 #include "timer1.h"
 
+
+/***************/
+/* Friend stuff */
+/***************/
+
+// Pointer to object used by _isrWgIntBlink to make it blink
+static WgInt *pBlinkObj;
+
+/*
+ *   Interrupt Service Routine to make the LCD value blink. Defined out of the
+ *  class to match the void (*)() type. It will behave as belonging to object
+ *  pBlinkObj.
+ */
+void _isrWgIntBlink()
+{
+  if (pBlinkObj->_BlinkClear)
+  {
+    pBlinkObj->_draw();
+    pBlinkObj->_BlinkClear = false;
+  }
+  else
+  {
+    pBlinkObj->_clear();
+    pBlinkObj->_BlinkClear = true;
+  }
+}
+
+
+/***************/
+/* Class stuff */
+/***************/
 
 /*
  *   Constructor. Initializes the object. Note that _MinValue and _MaxValue
@@ -16,6 +47,7 @@ WgInt::WgInt(LiquidCrystal &Lcd, uint8_t Cols, uint8_t Rows,
   _Size(Size)
 {
 }
+
 
 /*
  *   Sets the initial value and valid range of values.
@@ -155,8 +187,9 @@ void WgInt::_blinkOn()
   // We are currently displaying the value
   _BlinkClear = false;
 
-  // Enable ISR for blinking
-  enableIsr(std::bind(_isrBlink, this));
+  // Enable ISR to blinking function and reference it to this obj
+  pBlinkObj = this;
+  enableIsr(_isrWgIntBlink);
 }
 
 
@@ -167,24 +200,6 @@ void WgInt::_blinkOff()
 {
   // Disable ISR for blinking
   disableIsr();
-}
-
-
-/*
- *   Interrupt Service Routine to make the LCD value blink.
- */
-void WgInt::_isrBlink()
-{
-  if (_BlinkClear)
-  {
-    _draw();
-    _BlinkClear = false;
-  }
-  else
-  {
-    _clear();
-    _BlinkClear = true;
-  }
 }
 
 

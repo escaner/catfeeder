@@ -1,4 +1,5 @@
-#include <assert.h>
+#define __ASSERT_USE_STDERR
+#include <cassert>
 #include "display.h"
 
 /*

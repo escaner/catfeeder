@@ -3,6 +3,11 @@
 
 #include "widget.h"
 
+// ISR needs to be function of type void (*)() -> cannot be defined inside class
+// because it would be defined as type void (*<class>::)(), so make it a global
+// friend function
+void _isrWgIntBlink();
+
 
 /*
  *   Implements a widget to select an integer number.
@@ -18,7 +23,7 @@ public:
   virtual int16_t event(const Event &E);
 
 protected:
-  static const _BLINK_TIME = ;  // Microseconds
+  friend void _isrWgIntBlink();
 
   // Protected methods
   void _draw() const;
@@ -26,7 +31,6 @@ protected:
   void _drawBlinking() const;
   void _blinkOn();
   void _blinkOff();
-  void _isrBlink();
   void _increment();
   void _decrement();
 

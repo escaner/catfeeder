@@ -1,5 +1,6 @@
+#define __ASSERT_USE_STDERR
+#include <cassert>
 #include "auger.h"
-#include <assert.h>
 
 
 /*
