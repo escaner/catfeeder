@@ -26,6 +26,7 @@ const char PgMain::_SKIP_TEXT[] =
 /***********/
 /* Methods */
 /***********/
+
 /*
  *   Constructor.
  *  Paramters:

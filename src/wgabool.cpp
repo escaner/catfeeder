@@ -109,7 +109,7 @@ int8_t WgAbool::event(const Event &E)
     case Event::SwEvSelectCw:
     case Event::SwEvSelectCcw:
       // Invert value and update LCD while blinking
-      _pValues[_CurPos] = !_pValues[_CurPos]
+      _pValues[_CurPos] = !_pValues[_CurPos];
       _drawBlinking();
       // Ac = AcNone;
       break;

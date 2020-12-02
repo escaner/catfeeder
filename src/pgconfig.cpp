@@ -1,4 +1,6 @@
 #include "pgconfig.h"
+#include "pgtime.h"
+#include "pgmeals.h"
 
 
 /********************/
