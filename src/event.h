@@ -19,11 +19,11 @@ public:
   // Type of the event structure
   enum EventId: uint8_t
   {
-    EvInit,  // Initialize, first draw
-    EvSwitch,
-    EvTime,
-    EvMeal,
-    EvNextMeal
+    EvInit,     // Initialize, first draw
+    EvSwitch,   // Switch (button) event
+    EvTime,     // Carrying a DateTime class
+    EvMeal,     // Carrying a Meal class
+    EvNextMeal  // Carrying info about the next meal
   };
 
   // Event that can be returned regarding the switch user input

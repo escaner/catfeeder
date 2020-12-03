@@ -36,16 +36,16 @@ const char PgMain::_SKIP_TEXT[] =
  */
 PgMain::PgMain(LiquidCrystal &Lcd, uint8_t Cols, uint8_t Rows):
   Page(Lcd, Cols, Rows),
-  _PgConfig(this, Lcd, Cols, Rows),
   _State(StOk),
-  _ManFeeding(false)
+  _ManFeeding(false),
+  _PgConfig(this, Lcd, Cols, Rows)
 {
 }
 
 
 /*
  *   Starts a series of actions and events to draw this page in the display.
- *  It firs requests the time, and then the next meal time. Uses _State
+ *  It first requests the time, and then the next meal time. Uses _State
  *  to track the sequence of events.
  *  Returns:
  *  * PageAction requesting the current official time or no action when
@@ -66,7 +66,7 @@ PageAction PgMain::focus()
 
 
 /*
- *   Manage events received my main page.
+ *   Manage events received by page.
  *  Parameters:
  *  * E: event data
  *  Returns:
@@ -122,7 +122,7 @@ PageAction PgMain::event(const Event &E)
   case Event::EvNextMeal:
     // Check if we requested it, unchained from focus()
     if (_State == StNeedNextMeal)
-      // Yes, all data received
+      // Yes, all data received, we can finish initialization
       _State = StOk;
     // Either requested or because update, draw it
     _drawNextMeal(E.NextMeal);

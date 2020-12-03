@@ -17,11 +17,13 @@ public:
   virtual PageAction event(const Event &E);
 
 protected:
+  // Static constants
   static const uint8_t _NUM_OPTIONS = 4U;
   static const char _LINES[];
 
-  Page *_pParent;
-  WgSelect _Select;
+  // Member data
+  Page *_pParent;    // Parent page
+  WgSelect _Select;  // Widget in this page
 };
 
 

@@ -35,9 +35,9 @@ protected:
   void _drawNextMeal(const Event::NextMeal_t &NextMeal) const;
 
   // Member data
-  State_t _State;
-  bool _ManFeeding;  // Lock page switch while manual feeding happens
-  PgConfig _PgConfig;
+  State_t _State;      // Current initialization state
+  bool _ManFeeding;    // Lock page switch while manual feeding happens
+  PgConfig _PgConfig;  // Config page instance
 };
 
 #endif  // _PGMAIN_H_

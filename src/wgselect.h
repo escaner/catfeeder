@@ -21,6 +21,7 @@ protected:
   static const uint8_t _Coord2Opt[2][2];
   static const uint8_t _Coord4Opt[4][2];
 
+  // Protected methods
   void _drawCursor() const;
   void _clearCursor() const;
   void _prevOption();

@@ -1,6 +1,6 @@
 #include "pgconfig.h"
 #include "pgtime.h"
-#include "pgmeals.h"
+//#include "pgmeals.h"
 
 
 /********************/
@@ -22,7 +22,10 @@ const char PgConfig::_LINES[] =
 /*
  *   Constructor.
  *  Paramters:
+ *  * pParent: parent Page where to return the focus on exit
  *  * Lcd: reference to the lcd display that is being used.
+ *  * Cols: number of columns in the LCD.
+ *  * Rows: number of rows in the LCD.
  */
 PgConfig::PgConfig(Page *pParent, LiquidCrystal &Lcd, uint8_t Cols,
     uint8_t Rows):
