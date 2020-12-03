@@ -2,6 +2,7 @@
 #define _FEEDS_H_
 
 #include <RTClib.h>
+#include "config.h"
 #include "meal.h"
 
 
@@ -15,8 +16,6 @@
 class Feeds
 {
 public:
-  static const uint8_t NUM_MEALS = 4U;
-
   enum Next_t: int8_t
   {
     NEXT_NONE = -1,

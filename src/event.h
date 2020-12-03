@@ -56,7 +56,7 @@ public:
   {
     SwitchEvent Switch;   // Used by EvSwitch
     DateTime Time;        // Used by EvTime
-    const Meal *pMeal;    // Used by EvMeal
+    Meal *pMeal;          // Used by EvMeal
     NextMeal_t NextMeal;  // Used by EvNextMeal;
   };
 };

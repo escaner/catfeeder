@@ -69,8 +69,8 @@ protected:
   static const uint8_t _NUM_DAYS_PER_MONTH[];
 
   // Static tags in the display
-  static const char PgTime::_TIME_TAG[];
-  static const char PgTime::_DATE_TAG[];
+  static const char _TIME_TAG[];
+  static const char _DATE_TAG[];
 
   // Protected methods
   void _init(const DateTime &Time);
@@ -84,7 +84,8 @@ protected:
   Page *_pParent;                  // Parent page
   WgInt _Widgets[_NUM_WIDGETS];    // Widgets in this page
   uint16_t _Values[_NUM_WIDGETS];  // Values for the widgets
-  WgId_t _FocusWidget;          // Wich widget has the focus
+  WgId_t _FocusWidget;             // Which widget has the focus
 };
+
 
 #endif  // _PGTIME_H_

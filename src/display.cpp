@@ -15,6 +15,7 @@ Display::Display(uint8_t PinRs, uint8_t PinEnable, uint8_t PinD4, uint8_t PinD5,
   _Lcd.begin(_COLS, _ROWS);
 }
 
+
 /*
  *   Manages an event notification to the Display, passing it to the Page
  *  with focus.
@@ -31,11 +32,14 @@ Action Display::event(const Event &E)
   if (PgA.pFocusPage != nullptr)
   {
     assert(PgA.pFocusPage != _pFocusPage);  // Focus really changes
-    assert(PgA.Action.Id == Action::AcNone);  // No more actions on focus change
 
     // Update focus page and draw it
     _pFocusPage = PgA.pFocusPage;
-    PgA = _pFocusPage->focus();
+    PageAction PgAFocus = _pFocusPage->focus();
+
+    // First action overrides focus action: copy only if no action
+    if (PgA.Action.Id == Action::AcNone)
+      PgA = PgAFocus;
   }
 
   // Return the standard Action

@@ -24,19 +24,13 @@ public:
     AcNeedNextMeal,
     AcNeedTimeUtc,
     AcNeedMeal,
-    AcSetTime,
+    AcSetTimeUtc,
     AcSetMeal,
     AcManualFeedStart,
     AcManualFeedContinue,
     AcManualFeedEnd,
     AcSkipMeal,
     AcUnskipMeal
-  };
-
-  struct Meal_t
-  {
-    uint8_t Id;         // Used by NeedMeal, SetMeal
-    const Meal *pMeal;  // Used by SetMeal
   };
 
   // Constructors
@@ -51,9 +45,9 @@ public:
     {
     case AcNeedMeal:
     case AcSetMeal:
-      Meal = Ac.Meal;
+      MealId = Ac.MealId;
       break;
-    case AcSetTime:
+    case AcSetTimeUtc:
       Time = Ac.Time;
       break;
     }
@@ -67,8 +61,8 @@ public:
   ActionId Id;
   union
   {
-    Meal_t Meal;    // Used by AcNeedMeal, AcSetMeal
-    DateTime Time;  // Used by AcSetTime
+    uint8_t MealId;  // Used by AcNeedMeal, AcSetMeal
+    DateTime Time;   // Used by AcSetTime
   };
 };
 

@@ -15,10 +15,6 @@ public:
   static const uint8_t FIRST_DOTW_ES = 1U;
   static const uint8_t FIRST_DOTW_EN = 0U;
 
-  // Arrays with single letter representations of indexes
-  static const char DotwCharEn[DAYS_IN_A_WEEK];
-  static const char DotwCharEs[DAYS_IN_A_WEEK];
-
   // Methods
   static inline uint8_t incr(uint8_t &DotwId, uint8_t Increment);
   static inline uint8_t add(uint8_t DotwId, uint8_t Increment);

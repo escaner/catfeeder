@@ -1,15 +1,5 @@
 #include "dotwtext.h"
 
-/**************************************/
-/* Static constants with localization */
-/**************************************/
-
-const char DotwText::DotwCharEn[DAYS_IN_A_WEEK] =
-  { 'U', 'M', 'T', 'W', 'H', 'F', 'S' };
-
-const char DotwText::DotwCharEs[DAYS_IN_A_WEEK] =
-  { 'D', 'L', 'M', 'X', 'J', 'V', 'S' };
-
 
 /******************/
 /* Inline methods */

@@ -2,6 +2,8 @@
 #define _PGCONFIG_H_
 
 #include "page.h"
+#include "pgtime.h"
+#include "pgmeal.h"
 #include "wgselect.h"
 
 
@@ -24,6 +26,8 @@ protected:
   // Member data
   Page *_pParent;    // Parent page
   WgSelect _Select;  // Widget in this page
+  PgMeal _PgMeal;    // Page instance for meal configuration
+  PgTime _PgTime;    // Page instance for time configuration
 };
 
 

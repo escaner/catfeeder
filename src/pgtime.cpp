@@ -85,8 +85,14 @@ PageAction PgTime::event(const Event &E)
     case Widget::AcBack:
       // Check correctness of date
       if (_validDate())
-        // Correct -> go back to parent page
-        return PageAction(_pParent);
+      {
+        // Date is correct -> return it...
+        Action A(Action::AcSetTimeUtc);
+        A.Time = DateTime(_Values[WgYear], _Values[WgMonth], _Values[WgDay],
+          _Values[WgHour], _Values[WgMinute], _Values[WgSecond]);
+        // ... and go back to parent page
+        return PageAction(_pParent, A);
+      }
       else
         // Invalid date -> focus the day widget and perform no action
         _focusWidget(WgDay);
@@ -122,6 +128,12 @@ PageAction PgTime::event(const Event &E)
  */
 void PgTime::_init(const DateTime &Time)
 {
+  // Display tags in the LCD
+  _Lcd.setCursor(_TIME_TAG_COL, _TIME_ROW);
+  _Lcd.write(_TIME_TAG);
+  _Lcd.setCursor(_DATE_TAG_COL, _DATE_ROW);
+  _Lcd.write(_DATE_TAG);
+
   // Initialize values
   _Values[WgHour] = Time.hour();
   _Values[WgMinute] = Time.minute();

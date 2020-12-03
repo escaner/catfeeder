@@ -151,7 +151,7 @@ void WgInt::_draw() const
 
   // Convert value to text. Is should fit.
   sprintf(szValue, "%0*d", _Size, *_pValue);
-  _Lcd.print(szValue);
+  _Lcd.write(szValue);
 }
 
 

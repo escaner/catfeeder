@@ -1,6 +1,4 @@
 #include "pgconfig.h"
-#include "pgtime.h"
-//#include "pgmeals.h"
 
 
 /********************/
@@ -31,7 +29,9 @@ PgConfig::PgConfig(Page *pParent, LiquidCrystal &Lcd, uint8_t Cols,
     uint8_t Rows):
   Page(Lcd, Cols, Rows),
   _pParent(pParent),
-  _Select(Lcd, Cols, Rows, true)
+  _Select(Lcd, Cols, Rows, true),
+  _PgMeal(this, Lcd, Cols, Rows),
+  _PgTime(this, Lcd, Cols, Rows)
 {
 }
 
@@ -45,9 +45,9 @@ PageAction PgConfig::PgConfig::focus()
 {
   // Draw page
   _Lcd.setCursor(0, 0);
-  _Lcd.print(_LINES[0]);
+  _Lcd.write(_LINES[0]);
   _Lcd.setCursor(0, 1);
-  _Lcd.print(_LINES[1]);
+  _Lcd.write(_LINES[1]);
 
   // Draw select widget
   _Select.focus();
@@ -77,7 +77,7 @@ PageAction PgConfig::event(const Event &E)
     return PageAction(Action::AcUnskipMeal);
   case 2:
     // Go to config meals page
-    return PageAction(&_PgMeals);
+    return PageAction(&_PgMeal);
   case 3:
     // Go to config time page
     return PageAction(&_PgTime);

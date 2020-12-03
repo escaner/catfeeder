@@ -160,7 +160,7 @@ void PgMain::_drawTime(const DateTime &Time) const
   assert(strlen(Line) == _COLS);
 
   // Write line in LCD
-  _Lcd.print(Line);
+  _Lcd.write(Line);
 }
 
 
@@ -185,6 +185,6 @@ void PgMain::_drawNextMeal(const Event::NextMeal_t &NextMeal) const
   assert(strlen(Line) == _COLS);
 
   // Write line in LCD
-  _Lcd.print(Line);
+  _Lcd.write(Line);
 }
 
