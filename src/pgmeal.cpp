@@ -65,14 +65,8 @@ PageAction PgMeal::focus()
 
   // Only makes sense at StOk
   if (_State == StOk)
-  {
-    // Update state
-    _State = StNeedMeal;
-
-    // Request first meal
-    PgAc.Action.Id = Action::AcNeedMeal;
-    PgAc.Action.MealId = 0U;
-  }
+    // Request first meal (#0)
+    PgAc = _makeNeedMeal(0U);
 
   return PgAc;
 }
@@ -113,16 +107,8 @@ PageAction PgMeal::event(const Event &E)
         // Time: go back to Meal widget
         _focusMealWidget();
 
-        // Update Meal
-        _pMeal->setTime(_ValHour, _ValMinute);
-        _rearrangeDotwToEn(_DotwEn, _ValDotw);
-        _pMeal->setDotw(_DotwEn);
-        _pMeal->setQuantity(_ValQuantity);
-
-        // Notify of the update
-        Action A(Action::AcSetMeal);
-        A.MealId = _ValMeal;
-        return PageAction(A);
+        // Request a set meal
+        return _makeSetMeal();
       }
       break;
     case Widget::AcOk:
@@ -146,13 +132,8 @@ PageAction PgMeal::event(const Event &E)
         assert(_FocusWidget == WgMeal);
         assert(_State == StOk);
 
-        // Update state
-        _State = StNeedMeal;
-
-        // Request new meal data
-        PageAction PgAc(Action::AcNeedMeal);
-        PgAc.Action.MealId = _ValMeal;
-        return PgAc;
+        // Request selected meal id
+        return _makeNeedMeal(_ValMeal);
       }
       // No action
       break;
@@ -174,15 +155,19 @@ PageAction PgMeal::event(const Event &E)
   return PageAction();
 }
 
+
 /*
  *   Initializes page and widgets or just updates values if alredy initialized.
  *  Parameters:
  *  * Time: date and time in UTC to initialize values.
  */
-void PgMeal::_init(const Meal *pMeal)
+void PgMeal::_init(Meal *pMeal)
 {
   uint8_t Hour, Minute;
   bool DotwEn[DotwText::DAYS_IN_A_WEEK];
+
+  // Save pointer to the meal
+  _pMeal = pMeal;
 
   // Set time values
   pMeal->getTime(&Hour, &Minute);
@@ -221,9 +206,109 @@ void PgMeal::_init(const Meal *pMeal)
 }
 
 
-  void _focusMealWidget();
-  void _focusCfgWidgets();
-  void _focusNexCfgtWidget();
+/*
+ *   Configures the class to wait for an event with meal data and prepares
+ *  the PageAction object with that request to return.
+ *  Parameters:
+ *  * MealId: which meal we want.
+ *  Returns: the need meal action request.
+ */
+PageAction PgMeal::_makeNeedMeal(uint8_t MealId)
+{
+  // Update state: waiting for meal event
+  _State = StNeedMeal;
 
-  void _rearrangeDotwToEn(bool *pDst, const bool *pSrc) const;
-  void _rearrangeDotwFromEn(bool *pDst, const bool *pSrc) const;
+  // Create action to request new meal data
+  PageAction PgAc(Action::AcNeedMeal);
+  PgAc.Action.MealId = MealId;
+
+  return PgAc;
+}
+
+
+/*
+ *   Updates the Meal through the _pMeal pointer and prepares the PageAction
+ *  object with a request of update to return.
+ *  Returns: the set meal action request.
+ */
+PageAction PgMeal::_makeSetMeal() const
+{
+  bool _DotwEn[DotwText::DAYS_IN_A_WEEK];
+
+  // Update _Meal object with time widget values
+  _pMeal->setTime(_ValHour, _ValMinute);
+  _rearrangeDotwToEn(_DotwEn, _ValDotw);
+  _pMeal->setDotw(_DotwEn);
+  _pMeal->setQuantity(_ValQuantity);
+
+  // Create action to notify of the update
+  PageAction PgAc(Action::AcSetMeal);
+  PgAc.Action.MealId = _ValMeal;
+
+  return PgAc;
+}
+
+
+/*
+ *   Moves focus from a time widget to the meal widget.
+ */
+void PgMeal::_focusMealWidget()
+{
+  _FocusWidget = WgMeal;
+  _WgMeal.focus();
+}
+
+
+/*
+ *   Moves focus from  the meal widget to the time widgets.
+ */
+void PgMeal::_focusTimeWidgets()
+{
+  // First widget in time set is Dotw
+  _FocusWidget = WgDotw;
+  _WgDotw.focus();
+}
+
+
+/*
+ *   Moves focus from a time widget to the next one.
+ */
+void PgMeal::_focusNextTimeWidget()
+{
+  // Update widget id; turn back to 0 after the last one
+  _FocusWidget =
+    WgId_t((uint8_t(_FocusWidget) + uint8_t(1U)) % _NUM_WIDGETS_TIME);
+  _Widgets[_FocusWidget]->focus();
+}
+
+
+/*
+ *   Rearranges a bool array with days of the week from EN to ES order.
+ *  Parameters:
+ *  * pDst: destination array, with first day being Sunday.
+ *  * pSrc: source array, with first day being Monday.
+ */
+void PgMeal::_rearrangeDotwToEn(bool *pDst, const bool *pSrc) const
+{
+  // Copy all the correlative ones
+  memcpy(pDst+1, pSrc, (DotwText::DAYS_IN_A_WEEK - 1U) * sizeof (bool));
+
+  // Copy the missing one
+  pDst[0] = pSrc[DotwText::DAYS_IN_A_WEEK - 1U];
+}
+
+
+/*
+ *   Rearranges a bool array with days of the week from ES to EN order.
+ *  Parameters:
+ *  * pDst: destination array, with first day being Monday.
+ *  * pSrc: source array, with first day being Sunday.
+ */
+void PgMeal::_rearrangeDotwFromEn(bool *pDst, const bool *pSrc) const
+{
+  // Copy all the correlative ones
+  memcpy(pDst, pSrc+1, (DotwText::DAYS_IN_A_WEEK - 1U) * sizeof (bool));
+
+  // Copy the missing one
+  pDst[DotwText::DAYS_IN_A_WEEK - 1U] = pSrc[0];
+}

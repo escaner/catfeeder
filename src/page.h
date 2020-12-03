@@ -16,7 +16,7 @@ public:
   // Constructors
   PageAction(): pFocusPage(nullptr), Action() {}
   PageAction(Action::ActionId Id): pFocusPage(nullptr), Action(Id) {}
-  PageAction(const Action &Ac): pFocusPage(nullptr), Action(Ac) {}
+  // PageAction(const Action &Ac): pFocusPage(nullptr), Action(Ac) {}
   PageAction(Page *pPage): pFocusPage(pPage), Action() {}
   PageAction(Page *pPage, const Action &A): pFocusPage(pPage), Action(A) {}
 

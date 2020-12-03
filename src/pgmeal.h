@@ -72,7 +72,9 @@ protected:
   static const char _DOTW_CHAR_TRUE[DotwText::DAYS_IN_A_WEEK];
 
   // Protected methods
-  void _init(const Meal *pMeal);
+  void _init(Meal *pMeal);
+  PageAction _makeNeedMeal(uint8_t MealId);
+  PageAction _makeSetMeal() const;
   void _focusMealWidget();
   void _focusTimeWidgets();
   void _focusNextTimeWidget();
@@ -85,12 +87,12 @@ protected:
   bool _Initialized;  // Wether the class has been initialized
   // Widgets in this page
   WgAbool _WgDotw;
-  WgInt _WgMeal;
+  WgInt _WgMeal;  // Meal Id widget
   WgInt _WgHour;
   WgInt _WgMinute;
   WgInt _WgQuantity;
   // Values for Widgets
-  uint16_t _ValMeal;
+  uint16_t _ValMeal;  // Meal Id
   uint16_t _ValHour;
   uint16_t _ValMinute;
   uint16_t _ValQuantity;
