@@ -46,6 +46,8 @@ public:
     bool Skip;
   };
 
+  // Constructor
+  Event(EventId EvId): Id(EvId) {}
 
   /***************/
   /* Member data */

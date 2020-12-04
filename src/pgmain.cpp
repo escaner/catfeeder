@@ -112,12 +112,17 @@ PageAction PgMain::event(const Event &E)
   case Event::EvTime:
     // Check if we requested it from focus()
     if (_State == StNeedTime)
+    {
       // Yes, advance state
       _State = StNeedNextMeal;
-    // Either requested or because update, draw it
+      // Draw it
+      _drawTime(E.Time);
+      // Now request next meal data
+      return PageAction(Action::AcNeedNextMeal);
+    }
+    // Otherwise, just draw it and return no action
     _drawTime(E.Time);
-    // Now request next meal data
-    return PageAction(Action::AcNeedNextMeal);
+    break;
 
   case Event::EvNextMeal:
     // Check if we requested it, unchained from focus()

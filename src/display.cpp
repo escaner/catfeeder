@@ -45,3 +45,17 @@ Action Display::event(const Event &E)
   // Return the standard Action
   return PgA.Action;
 }
+
+
+/*
+ *   Shows an error message in the display.
+ *  Parameters:
+ *  * pMsg: string with the error message.
+ */
+void Display::error(const char *pMsg)
+{
+  _Lcd.clear();
+  _Lcd.write("ERROR:");
+  _Lcd.setCursor(0, 1);
+  _Lcd.write(pMsg);
+}

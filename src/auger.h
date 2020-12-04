@@ -9,7 +9,7 @@ class Auger
 {
 public:
   Auger(uint8_t PinStep, uint8_t PinDir, uint8_t PinMs1, uint8_t PinMs2,
-    uint8_t PinEnable, uint8_t Rpm, uint8_t QuarterRevsPerQtyUnit);
+    uint8_t PinEnable, uint8_t Rpm, uint8_t EighthRevsPerQtyUnit);
 
   void feed(uint8_t Quantity) const;
   void startFeeding() const;

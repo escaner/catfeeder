@@ -15,6 +15,7 @@ public:
   Display(uint8_t PinRs, uint8_t PinEnable, uint8_t PinD4, uint8_t PinD5,
     uint8_t PinD6, uint8_t PinD7);
   Action event(const Event &E);
+  void error(const char *pMsg);
 
 protected:
   // Display constants
