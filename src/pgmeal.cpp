@@ -1,4 +1,5 @@
-#include <cassert>
+#include "config.h"
+#include <assert.h>
 #include "pgmeal.h"
 
 
@@ -83,7 +84,7 @@ PageAction PgMeal::focus()
  */
 PageAction PgMeal::event(const Event &E)
 {
-  bool _DotwEn[DotwText::DAYS_IN_A_WEEK];
+  uint16_t MealId;
 
   switch (E.Id)
   {
@@ -92,7 +93,7 @@ PageAction PgMeal::event(const Event &E)
     return focus();
 
   case Event::EvSwitch:  // Switch has been pressed / released / something.
-    uint16_t MealId = _ValMeal;  // Save meal id to later check if changed
+    MealId = _ValMeal;  // Save meal id to later check if changed
 
     // Pass event to current widget with the focus
     switch (_Widgets[_FocusWidget]->event(E))
@@ -222,7 +223,7 @@ PageAction PgMeal::_makeNeedMeal(uint8_t MealId)
 
   // Create action to request new meal data
   PageAction PgAc(Action::AcNeedMeal);
-  PgAc.Action.MealId = MealId;
+  PgAc.MainAction.MealId = MealId;
 
   return PgAc;
 }
@@ -245,7 +246,7 @@ PageAction PgMeal::_makeSetMeal() const
 
   // Create action to notify of the update
   PageAction PgAc(Action::AcSetMeal);
-  PgAc.Action.MealId = _ValMeal;
+  PgAc.MainAction.MealId = _ValMeal;
 
   return PgAc;
 }

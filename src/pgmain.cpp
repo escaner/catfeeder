@@ -1,5 +1,5 @@
-#define __ASSERT_USE_STDERR
-#include <cassert>
+#include "config.h"
+#include <assert.h>
 #include "pgmain.h"
 #include "dotwtext.h"
 
@@ -9,17 +9,17 @@
 /********************/
 
 // Text to display in the page
-const char PgMain::_LINES[] =
+const char *const PgMain::_LINES[] =
 {
   "%02hhu:%02hhu %c %02hhu/%02hhu/%02hhu",
   "SGTE %c%02hhu:%02hhu %s"
 };
 
 // Skip condition text. 0 -> normal, 1 -> served, 2 -> skip
-const char PgMain::_STATUS_TEXT[] =
+const char PgMain::_STATUS_TEXT[][_NEXTMEAL_STATUS_SIZE+1U] =
 {
   "     ",
-  "SRVDA"
+  "SRVDA",
   "SALTA"
 };
 
@@ -75,6 +75,9 @@ PageAction PgMain::focus()
  */
 PageAction PgMain::event(const Event &E)
 {
+#pragma GCC diagnostic push
+// Disable: warning: enumeration value Ev* & SwEv* not handled in switch
+#pragma GCC diagnostic ignored "-Wswitch"
   switch (E.Id)
   {
   case Event::EvInit:
@@ -84,6 +87,7 @@ PageAction PgMain::event(const Event &E)
   case Event::EvSwitch:  // Switch has been pressed / released / something.
     // Are we manually feeding?
     if (_ManFeeding)
+    {
       // Discard all switch events except for this one
       if (E.Switch == Event::SwEvBackRelease)
       {
@@ -94,7 +98,7 @@ PageAction PgMain::event(const Event &E)
       else
         // On any other switch, just continue feeding
         return PageAction(Action::AcManualFeedContinue);
-
+    }
     // else (no manually feeding), check other switches
     switch (E.Switch)
     {
@@ -135,6 +139,7 @@ PageAction PgMain::event(const Event &E)
     // We don't need more data: no action
     break;
   }
+#pragma GCC diagnostic pop
 
   // Default: no action
   return PageAction();

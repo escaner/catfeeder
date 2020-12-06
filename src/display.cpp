@@ -1,5 +1,5 @@
-#define __ASSERT_USE_STDERR
-#include <cassert>
+#include "config.h"
+#include <assert.h>
 #include "display.h"
 
 /*
@@ -38,12 +38,12 @@ Action Display::event(const Event &E)
     PageAction PgAFocus = _pFocusPage->focus();
 
     // First action overrides focus action: copy only if no action
-    if (PgA.Action.Id == Action::AcNone)
+    if (PgA.MainAction.Id == Action::AcNone)
       PgA = PgAFocus;
   }
 
   // Return the standard Action
-  return PgA.Action;
+  return PgA.MainAction;
 }
 
 

@@ -1,6 +1,6 @@
-// #define NDEBUG
-
 #include "config.h"
+#include "event.h"
+#include "action.h"
 #include "feeds.h"
 #include "switchpnl.h"
 #include "clock.h"
@@ -61,13 +61,135 @@ static Display Lcd(PIN_LCD_RS, PIN_LCD_E, PIN_LCD_D4, PIN_LCD_D5, PIN_LCD_D6,
 static Auger Edsm(PIN_ED_STEP, PIN_ED_DIR, PIN_ED_MS1, PIN_ED_MS2,
   PIN_ED_ENABLE, AUGER_RPM, AUGER_EIGHTH_REVS_PER_MEAL_QTY);
 
-Action A;
-
-
 
 /***********/
 /* Methods */
 /***********/
+
+// Local function prototypes
+// Arduino generates incorrectly the ones using the Event class
+static bool sendEventAndHandleActions(Event E);
+static Event eventTime();
+static Event eventNextMeal();
+static bool checkFeedTime();
+
+
+/*
+ *   Arduino initialization function.
+ */
+void setup()
+{
+  DBGINIT();
+
+  // Initialize buttons object
+  SwitchPanel.init();
+
+  // Initialize RTC and check for errors
+  if (Rtc.init())
+  {
+    Lcd.error("Rtc.init()");
+    abort();
+  }
+
+  // Send event to initialize display
+  sendEventAndHandleActions(Event(Event::EvInit));
+}
+
+
+/*
+ *   Arduino loop function.
+ */
+void loop()
+{
+  static unsigned long LastCheckFeed = 0UL;
+  static unsigned long LastUpdateTime = 0UL;
+  static unsigned long LastMealTime = 0UL;
+  bool UpdateMealTime = false;
+  unsigned long CurTime;
+
+  // Get current time
+  CurTime = millis();
+
+  // Check update time (counter overflow works well)
+  if (CurTime - LastUpdateTime >= TIME_UPDATE_INTERVAL)
+  {
+    LastUpdateTime = CurTime;
+    sendEventAndHandleActions(eventTime());
+  }
+
+  // Check feed time every FEED_CHECK_INTERVAL ms (counter overflow works well)
+  if (CurTime - LastCheckFeed >= FEED_CHECK_INTERVAL)
+  {
+    LastCheckFeed = CurTime;
+    if (checkFeedTime())
+    {
+      LastMealTime = CurTime;
+      UpdateMealTime = true;
+    }
+  }
+
+  // MEAL_UPDATE_DELAY ms after serving a meal, the LCD next meal is updated
+  if (UpdateMealTime && CurTime - LastMealTime >= MEAL_UPDATE_DELAY)
+  {
+    UpdateMealTime = false;
+    sendEventAndHandleActions(eventNextMeal());
+  }
+
+  // Loop checking switch panel
+  for (uint16_t SwIdx=SWITCH_LOOP_COUNT; SwIdx; SwIdx--)
+  {
+    Event::SwitchEvent SwE;
+    bool ManuallyFeeding = false;
+
+    // Loop for manual feeding (synchronous interactive task)
+    do
+    {
+      // Did we get a switch event?
+      if ((SwE = SwitchPanel.check()) != Event::SwEvNone)
+      {
+        // Build event
+        Event E(Event::EvSwitch);
+        E.Switch = SwE;
+
+        // Notify event and handle unchained actions
+        ManuallyFeeding = sendEventAndHandleActions(E);
+      }
+      else if (ManuallyFeeding)
+        // Keep feeding when no switches registered
+        Edsm.keepFeeding();
+    }
+    while (ManuallyFeeding);
+  }
+}
+
+
+/*
+ *   Prepares an event to update the time in the LCD.
+ */
+static Event eventTime()
+{
+  // Create an event that contains the official time from the RTC
+  Event E(Event::EvTime);
+  E.Time = Rtc.getOfficial();
+
+  // Return the event
+  return E;
+}
+
+
+/*
+ *   Prepares an event to update LCD display next meal info
+ */
+static Event eventNextMeal()
+{
+  // Create event to update the next meal in the LCD 
+  Event E(Event::EvNextMeal);
+  E.NextMeal.Status = FeedData.timeOfNext(&E.NextMeal.Dotw, &E.NextMeal.Hour,
+    &E.NextMeal.Minute);
+
+  // Return the event
+  return E;
+}
 
 
 /*
@@ -82,7 +204,7 @@ static bool sendEventAndHandleActions(Event E)
 {
   bool End = false;
   bool Feeding = false;
-  Event E;
+  Action A;
 
   // Loop until no more actions requested or no more events needed
   do
@@ -147,20 +269,6 @@ static bool sendEventAndHandleActions(Event E)
 
 
 /*
- *   Prepares an event to update the time in the LCD.
- */
-static Event eventTime()
-{
-  // Create an event that contains the official time from the RTC
-  Event E(Event::EvTime);
-  E.Time = Rtc.getOfficial();
-
-  // Return the event
-  return E;
-}
-
-
-/*
  *   Checks whether it is time for a meal, serves it and updates the
  *  next meal in the FeedData object and LCD.
  *  Returns:
@@ -171,6 +279,7 @@ static Event eventTime()
 static bool checkFeedTime()
 {
   uint8_t Quantity;
+  bool MealServed = false;
 
   // Get current official time from the RTC and check whether it is meal time
   Quantity = FeedData.check(Rtc.getOfficial());
@@ -183,109 +292,9 @@ static bool checkFeedTime()
 
     // Update LCD
     sendEventAndHandleActions(eventNextMeal());
-  }
-}
 
-
-/*
- *   Prepares an event to update LCD display next meal info
- */
-static Event eventNextMeal()
-{
-  // Create event to update the next meal in the LCD 
-  Event E(Event::EvNextMeal);
-  E.NextMeal.Status = FeedData.timeOfNext(&E.NextMeal.Dotw, &E.NextMeal.Hour,
-    &E.NextMeal.Minute);
-
-  // Return the event
-  return E;
-}
-
-
-/*
- *   Arduino initialization function.
- */
-void setup()
-{
-  DBGINIT();
-
-  // Initialize buttons object
-  SwitchPanel.init();
-
-  // Initialize RTC and check for errors
-  if (Rtc.init())
-  {
-    Lcd.error("Rtc.init()");
-    abort();
+    MealServed = true;
   }
 
-  // Send event to initialize display
-  sendEventAndHandleActions(Lcd.event(Event(Event::EvInit)));
-}
-
-
-/*
- *   Arduino loop function.
- */
-void loop()
-{
-  static unsigned long LastCheckFeed = 0UL;
-  static unsigned long LastUpdateTime = 0UL;
-  static unsigned long LastMealTime = 0UL;
-  bool UpdateMealTime = false;
-  unsigned long CurTime;
-
-  // Get current time
-  CurTime = millis();
-
-  // Check update time (counter overflow works well)
-  if (CurTime - LastUpdateTime >= TIME_UPDATE_INTERVAL)
-  {
-    LastUpdateTime = CurTime;
-    sendEventAndHandleActions(eventTime());
-  }
-
-  // Check feed time every FEED_CHECK_INTERVAL ms (counter overflow works well)
-  if (CurTime - LastCheckFeed >= FEED_CHECK_INTERVAL)
-  {
-    LastCheckFeed = CurTime;
-    if (checkFeedTime())
-    {
-      LastMealTime = CurTime;
-      UpdateMealTime = true;
-    }
-  }
-
-  // MEAL_UPDATE_DELAY ms after serving a meal, the LCD next meal is updated
-  if (UpdateMealTime && CurTime - LastMealTime >= MEAL_UPDATE_DELAY)
-  {
-    UpdateMealTime = false;
-    sendEventAndHandleActions(eventNextMeal());
-  }
-
-  // Loop checking switch panel
-  for (uint16_t SwIdx=SWITCH_LOOP_COUNT; SwIdx; SwIdx--)
-  {
-    Event::SwitchEvent SwE;
-    bool ManuallyFeeding = false;
-
-    // Loop for manual feeding (synchronous interactive task)
-    do
-    {
-      // Did we get a switch event?
-      if ((SwE = SwitchPanel.check()) != Event::SwEvNone)
-      {
-        // Build event
-        Event E(Event::EvSwitch);
-        E.Switch = SwE;
-
-        // Notify event and handle unchained actions
-        ManuallyFeeding = sendEventAndHandleActions(Lcd.event(E));
-      }
-      else if (ManuallyFeeding)
-        // Keep feeding when no switches registered
-        Edsm.keepFeeding();
-    }
-    while (ManuallyFeeding);
-  }
+  return MealServed;
 }

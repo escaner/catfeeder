@@ -1,6 +1,7 @@
 #ifndef _FEEDS_H_
 #define _FEEDS_H_
 
+#include <Arduino.h>
 #include <RTClib.h>
 #include "config.h"
 #include "meal.h"
@@ -32,7 +33,7 @@ public:
   void unskipNext();
   bool isSkippingNext() const;
   Next_t timeOfNext(uint8_t *pDotw, uint8_t *pHour, uint8_t *pMinute) const;
-  Meal getMeal(uint8_t Id) const;
+  Meal *getMeal(uint8_t Id);
   void setMeal(const DateTime &Now, uint8_t Id, const Meal &NewMeal);
 
 protected:

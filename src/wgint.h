@@ -1,6 +1,7 @@
 #ifndef _WGINT_H_
 #define _WGINT_H_
 
+#include <Arduino.h>
 #include "widget.h"
 
 

@@ -1,9 +1,13 @@
 #ifndef _PAGE_H_
 #define _PAGE_H_
 
+#include <Arduino.h>
 #include <LiquidCrystal.h>
 #include "event.h"
 #include "action.h"
+
+
+class Page;
 
 
 /*
@@ -14,14 +18,14 @@ class PageAction
 {
 public:
   // Constructors
-  PageAction(): pFocusPage(nullptr), Action() {}
-  PageAction(Action::ActionId Id): pFocusPage(nullptr), Action(Id) {}
-  // PageAction(const Action &Ac): pFocusPage(nullptr), Action(Ac) {}
-  PageAction(Page *pPage): pFocusPage(pPage), Action() {}
-  PageAction(Page *pPage, const Action &A): pFocusPage(pPage), Action(A) {}
+  PageAction(): pFocusPage(nullptr), MainAction() {}
+  PageAction(Action::ActionId Id): pFocusPage(nullptr), MainAction(Id) {}
+  // PageAction(const Action &Ac): pFocusPage(nullptr), MainAction(Ac) {}
+  PageAction(Page *pPage): pFocusPage(pPage), MainAction() {}
+  PageAction(Page *pPage, const Action &A): pFocusPage(pPage), MainAction(A) {}
 
   Page *pFocusPage;  // nullprt or new focus Page
-  Action Action;
+  Action MainAction;
 };
 
 
@@ -33,9 +37,9 @@ class Page
 public:
   // Constructor definition
   Page(LiquidCrystal &Lcd, uint8_t Cols, uint8_t Rows):
-    _Lcd(Lcd),
     _COLS(Cols),
-    _ROWS(Rows)
+    _ROWS(Rows),
+    _Lcd(Lcd)
   {
   }
 

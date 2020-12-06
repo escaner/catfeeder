@@ -1,3 +1,4 @@
+#include "config.h"
 #include "pgconfig.h"
 
 
@@ -6,7 +7,7 @@
 /********************/
 
 // Text to display in the page
-const char PgConfig::_LINES[] =
+const char *const PgConfig::_LINES[] =
 {
   " SALTAR  NO SALT",
   " HORA    COMIDAS"

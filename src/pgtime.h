@@ -1,6 +1,7 @@
 #ifndef _PGTIME_H_
 #define _PGTIME_H_
 
+#include <Arduino.h>
 #include "page.h"
 #include "wgint.h"
 
@@ -35,18 +36,18 @@ protected:
   static const uint8_t _NUM_WIDGETS = 6U;
 
   // Widget value limits
-  static const uint8_t _MIN_HOUR = 0U;
-  static const uint8_t _MAX_HOUR = 23U;
-  static const uint8_t _MIN_MINUTE = 0U;
-  static const uint8_t _MAX_MINUTE = 59U;
-  static const uint8_t _MIN_SECOND = 0U;
-  static const uint8_t _MAX_SECOND = 59U;
-  static const uint8_t _MIN_MONTH = 1U;
-  static const uint8_t _MAX_MONTH = 12U;
-  static const uint8_t _MIN_DAY = 1U;
-  static const uint8_t _MAX_DAY = 31U;
-  static const uint8_t _MIN_YEAR = 2000U;
-  static const uint8_t _MAX_YEAR = _MIN_YEAR + UINT8_MAX;
+  static const uint16_t _MIN_HOUR = 0U;
+  static const uint16_t _MAX_HOUR = 23U;
+  static const uint16_t _MIN_MINUTE = 0U;
+  static const uint16_t _MAX_MINUTE = 59U;
+  static const uint16_t _MIN_SECOND = 0U;
+  static const uint16_t _MAX_SECOND = 59U;
+  static const uint16_t _MIN_MONTH = 1U;
+  static const uint16_t _MAX_MONTH = 12U;
+  static const uint16_t _MIN_DAY = 1U;
+  static const uint16_t _MAX_DAY = 31U;
+  static const uint16_t _MIN_YEAR = 2000U;
+  static const uint16_t _MAX_YEAR = _MIN_YEAR + UINT8_MAX;
 
   // Positions of widgets and tags
   static const uint8_t _TIME_ROW = 0U;

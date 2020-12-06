@@ -1,6 +1,7 @@
-#ifndef _Display_H_
-#define _Display_H_
+#ifndef _DISPLAY_H_
+#define _DISPLAY_H_
 
+#include <Arduino.h>
 #include <LiquidCrystal.h>
 #include "page.h"
 #include "pgmain.h"

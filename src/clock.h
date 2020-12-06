@@ -1,6 +1,7 @@
 #ifndef _CLOCK_H_
 #define _CLOCK_H_
 
+#include <Arduino.h>
 #include <RTClib.h>
 
 

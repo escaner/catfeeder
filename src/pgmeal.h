@@ -1,6 +1,7 @@
 #ifndef _PGMEAL_H_
 #define _PGMEAL_H_
 
+#include <Arduino.h>
 #include "config.h"
 #include "page.h"
 #include "wgint.h"

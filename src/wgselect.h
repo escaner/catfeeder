@@ -1,6 +1,7 @@
 #ifndef _WGSELECT_H_
 #define _WGSELECT_H_
 
+#include <Arduino.h>
 #include "widget.h"
 
 
@@ -29,7 +30,7 @@ protected:
 
   // Member data
   const uint8_t _NumOptions;  // Whether a 2 or 4 option select
-  const uint8_t const (* const _CoordOpt)[2];  // One of the _Coord?Op arrays
+  const uint8_t (* const _CoordOpt)[2];  // One of the _Coord?Opt arrays
 
   uint8_t _CurOption;  // Currently selected option
 };

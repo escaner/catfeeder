@@ -1,6 +1,7 @@
 #ifndef _WIDGET_H_
 #define _WIDGET_H_
 
+#include <Arduino.h>
 #include <LiquidCrystal.h>
 #include "event.h"
 
@@ -14,9 +15,9 @@ public:
   static const int8_t AcBack = -3;
 
   Widget(LiquidCrystal &Lcd, uint8_t Cols, uint8_t Rows):
-    _Lcd(Lcd),
     _COLS(Cols),
-    _ROWS(Rows)
+    _ROWS(Rows),
+    _Lcd(Lcd)
   {
   }
 

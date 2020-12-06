@@ -10,9 +10,9 @@
 #   define DBGPRINT(STR) Serial.print(STR)
 #   define DBGPRINTLN(STR) Serial.println(STR)
 # else  // NDEBUG
-#   define DBGINIT (void)
-#   define DBGPRINT(STR) (void)
-#   define DBGPRINTLN(STR) (void)
+#   define DBGINIT() ((void) (0))
+#   define DBGPRINT(STR) ((void) (0))
+#   define DBGPRINTLN(STR) ((void) (0))
 # endif  // NDEBUG
 
 

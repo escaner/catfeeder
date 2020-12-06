@@ -1,5 +1,5 @@
-#define __ASSERT_USE_STDERR
-#include <cassert>
+#include "config.h"
+#include <assert.h>
 #include "wgabool.h"
 #include "timer1.h"
 

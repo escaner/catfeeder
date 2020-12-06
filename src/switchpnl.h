@@ -1,6 +1,7 @@
 #ifndef _SWITCHPNL_H_
 #define _SWITCHPNL_H_
 
+#include <Arduino.h>
 #include <REncoder.h>
 #include <Switch.h>
 #include "event.h"

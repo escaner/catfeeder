@@ -1,6 +1,7 @@
 #ifndef _ACTION_H_
 #define _ACTION_H_
 
+#include <Arduino.h>
 #include <RTClib.h>
 #include "meal.h"
 
@@ -41,6 +42,9 @@ public:
   Action(const Action &Ac):
     Id(Ac.Id)
   {
+#pragma GCC diagnostic push
+// Disable: warning: enumeration value not handled in switch
+#pragma GCC diagnostic ignored "-Wswitch"
     switch (Id)
     {
     case AcNeedMeal:
@@ -51,6 +55,7 @@ public:
       Time = Ac.Time;
       break;
     }
+#pragma GCC diagnostic pop
   }
 
 

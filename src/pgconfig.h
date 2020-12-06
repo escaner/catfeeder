@@ -1,6 +1,7 @@
 #ifndef _PGCONFIG_H_
 #define _PGCONFIG_H_
 
+#include <Arduino.h>
 #include "page.h"
 #include "pgtime.h"
 #include "pgmeal.h"
@@ -21,7 +22,7 @@ public:
 protected:
   // Static constants
   static const uint8_t _NUM_OPTIONS = 4U;
-  static const char _LINES[];
+  static const char *const _LINES[];
 
   // Member data
   Page *_pParent;    // Parent page

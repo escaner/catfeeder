@@ -1,6 +1,7 @@
 #ifndef _PGMAIN_H_
 #define _PGMAIN_H_
 
+#include <Arduino.h>
 #include "pgconfig.h"
 
 
@@ -27,8 +28,9 @@ protected:
   static const uint8_t _TIME_ROW = 0U;
   static const uint8_t _NEXTMEAL_COL = 0U;
   static const uint8_t _NEXTMEAL_ROW = 1U;
-  static const char _LINES[];
-  static const char _STATUS_TEXT[];
+  static const uint8_t _NEXTMEAL_STATUS_SIZE = 5U;
+  static const char *const _LINES[];
+  static const char _STATUS_TEXT[][_NEXTMEAL_STATUS_SIZE+1U];
 
   // Protected methods
   void _drawTime(const DateTime &Time) const;

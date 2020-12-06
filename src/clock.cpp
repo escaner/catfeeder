@@ -1,3 +1,4 @@
+#include "config.h"
 #include "clock.h"
 #include "dotwtext.h"
 
@@ -101,7 +102,7 @@ bool Clock::_inDst(const DateTime &UtcTime) const
 {
   DateTime StartTime, EndTime;
   uint16_t Year;
-  uint8_t DiffDays, StartDay, EndDay;
+  uint8_t StartDay, EndDay;
   bool Dst;
 
   if (_DstEnabled)

@@ -1,6 +1,9 @@
 #ifndef _AUGER_H_
 #define _AUGER_H_
 
+#include <Arduino.h>
+
+
 /*
  *   Class to interface with the EasyDriver controller and a stepper motor
  *  attached and connected to the auger that dispenses the food.
@@ -27,8 +30,8 @@ protected:
   const uint8_t _PinMs1;
   const uint8_t _PinMs2;
   const uint8_t _PinEnable;
-  const unsigned int _HalfStepTime;  // 1/2 of a step in microseconds
   const uint8_t _EighthRevsPerQtyUnit;
+  const unsigned int _HalfStepTime;  // 1/2 of a step in microseconds
 
   void _enableMotor() const;
   void _disableMotor() const;

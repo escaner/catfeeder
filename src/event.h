@@ -1,6 +1,7 @@
 #ifndef _EVENT_H_
 #define _EVENT_H_
 
+#include <Arduino.h>
 #include <RTClib.h>
 #include "feeds.h"
 
@@ -47,8 +48,35 @@ public:
     Feeds::Next_t Status;
   };
 
-  // Constructor
+  // Constructors
+  Event() {}
   Event(EventId EvId): Id(EvId) {}
+  
+  // Copy constructor
+  Event(const Event &Ev):
+    Id(Ev.Id)
+  {
+#pragma GCC diagnostic push
+// Disable: warning: enumeration value 'EvInit' not handled in switch
+#pragma GCC diagnostic ignored "-Wswitch"
+  switch (Id)
+    {
+    case EvSwitch:
+      Switch = Ev.Switch;
+      break;
+    case EvTime:
+    case EvTimeUtc:
+      Time = Ev.Time;
+      break;
+    case EvMeal:
+      pMeal = Ev.pMeal;
+      break;
+    case EvNextMeal:
+      NextMeal = Ev.NextMeal;
+      break;
+    }
+#pragma GCC diagnostic pop
+  }
 
 
   /***************/

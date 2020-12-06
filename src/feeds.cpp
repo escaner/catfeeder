@@ -1,5 +1,5 @@
-#define __ASSERT_USE_STDERR
-#include <cassert>
+#include "config.h"
+#include <assert.h>
 #include <EEPROM.h>
 #include "feeds.h"
 
@@ -103,6 +103,7 @@ uint8_t Feeds::check(const DateTime &Now)
 
     // Does next meal match the current day and time?
     if (pMeal->matchesTime(Now))
+    {
       if (!_NextMealDealt)
       {
         // First time matching the meal time, deal with it
@@ -118,6 +119,7 @@ uint8_t Feeds::check(const DateTime &Now)
         }
       }
       // else: already checked this very minute, Quantity = 0
+    }
     else
     {
       // Because we already checked this and did a reset() in that case
@@ -207,11 +209,11 @@ Feeds::Next_t Feeds::timeOfNext(uint8_t *pDotw, uint8_t *pHour,
  *  Parameters:
  *  * Id: meal identifier.
  */
-Meal Feeds::getMeal(uint8_t Id) const
+Meal *Feeds::getMeal(uint8_t Id)
 {
   assert(Id < NUM_MEALS);
 
-  return _Meals[Id];
+  return _Meals + Id;
 }
 
 

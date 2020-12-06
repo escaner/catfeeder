@@ -1,5 +1,5 @@
-#define __ASSERT_USE_STDERR
-#include <cassert>
+#include "config.h"
+#include <assert.h>
 #include <EEPROM.h>
 #include "meal.h"
 #include "dotwtext.h"
@@ -60,11 +60,11 @@ void Meal::setTime(uint8_t Hour, uint8_t Minute)
  */
 void Meal::setDotw(const bool pDotwArray[])
 {
-  uint8_t Idx = DotwText::DAYS_IN_A_WEEK;
+  int8_t Idx = (int8_t) DotwText::DAYS_IN_A_WEEK;
   byte Dotw = 0U;
 
   // Pack array of 7 bools into a byte
-  while (--Idx >= 0U)
+  while (--Idx >= 0)
   {
     // Current bit in loop is the least significant in Dotw
     // Set bit when true
@@ -72,7 +72,7 @@ void Meal::setDotw(const bool pDotwArray[])
       Dotw |= 0b1;
 
     // Do not shift least significant (final) bit
-    if (Idx > 0U)
+    if (Idx > (int8_t) 0)
       Dotw <<= 1;
   }
 
@@ -166,7 +166,6 @@ bool Meal::compare(const Meal &OtherMeal, const DateTime &TimeRef,
 {
   bool OtherFirst;  // Whether OtherMeal arrives before this Meal
   uint8_t RefDotw, RefHour, RefMinute;  // Reference day of the week & time
-  uint8_t ThisDotw, OtherDotw;
   TimeSpan ThisSpan, OtherSpan;
 
   // This makes no sense when meals have no day of the week enabled
@@ -276,7 +275,7 @@ uint8_t Meal::_nextOccurrenceDotw(uint8_t RefDotw, uint8_t RefHour,
   // If this meal has reference day of the week enabled and time is later
   // (but not equal) we have found its next occurrence...
   if (!(bitRead(_Meal.Dotw, MealDotw) &&
-      (_Meal.Hour>RefHour || _Meal.Hour==RefHour && _Meal.Minute>RefMinute)))
+      (_Meal.Hour>RefHour || (_Meal.Hour==RefHour && _Meal.Minute>RefMinute))))
   {
     // ... otherwise, keep looking up to one week later
     for (DotwText::incr(MealDotw, 1); MealDotw!=RefDotw;

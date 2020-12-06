@@ -1,4 +1,6 @@
+#include "config.h"
 #include "timer1.h"
+#include <Arduino.h>
 
 
 /********************/

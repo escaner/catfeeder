@@ -1,7 +1,6 @@
 {
     "board": "arduino:avr:nano",
-    "configuration": "cpu=atmega328old",
     "programmer": "AVRISP mkII",
     "sketch": "src/catfeeder.ino",
-    "port": "/dev/ttyACM0"
+    "configuration": "cpu=atmega328old"
 }

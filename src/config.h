@@ -1,3 +1,12 @@
+#ifndef _CONFIG_H_
+#define _CONFIG_H_
+
+#define NDEBUG
+#define __ASSERT_USE_STDERR
+
+#include <Arduino.h>
+
+
 /*
  *   Define constants for general program configuration.
  */
@@ -29,3 +38,10 @@ static const uint16_t SWITCH_LOOP_COUNT = 600U;
 
 // Time sice a meal is served to update the LCD next meal information in ms
 static const uint16_t MEAL_UPDATE_DELAY = 5U * 60U * 1000U;
+
+/* Display */
+//static const uint8_t DISPLAY_ROWS = 2U;
+//static const uint8_t DISPLAY_COLS = 16U;
+
+
+#endif  // _CONFIG_H_
