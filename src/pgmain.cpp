@@ -15,10 +15,11 @@ const char PgMain::_LINES[] =
   "SGTE %c%02hhu:%02hhu %s"
 };
 
-// Skip condition text. 0 -> no skip; 1 -> skip
-const char PgMain::_SKIP_TEXT[] =
+// Skip condition text. 0 -> normal, 1 -> served, 2 -> skip
+const char PgMain::_STATUS_TEXT[] =
 {
   "     ",
+  "SRVDA"
   "SALTA"
 };
 
@@ -178,15 +179,16 @@ void PgMain::_drawNextMeal(const Event::NextMeal_t &NextMeal) const
 {
   char Line[_COLS+1];  // Plus end of string
   char Dotw;
-  const char *pSkip;
+  const char *pStatus;
 
   // Move LCD cursor to next meal position
   _Lcd.setCursor(_NEXTMEAL_COL, _NEXTMEAL_ROW);
 
   // Get single char representation of the day of the week
   Dotw = DotwText::DotwCharEs[NextMeal.Dotw];
-  pSkip = _SKIP_TEXT[NextMeal.Skip? 1: 0];
-  sprintf(Line, _LINES[1], NextMeal.Hour, NextMeal.Minute, Dotw, pSkip);
+  assert(NextMeal.Status >= 0);
+  pStatus = _STATUS_TEXT[NextMeal.Status];
+  sprintf(Line, _LINES[1], NextMeal.Hour, NextMeal.Minute, Dotw, pStatus);
   assert(strlen(Line) == _COLS);
 
   // Write line in LCD

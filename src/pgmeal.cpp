@@ -10,12 +10,6 @@
 const char PgMeal::_MEAL_TAG[] = "COMIDA#";
 const char PgMeal::_TIME_TAG[] = "CANTIDAD";
 
-// Arrays with single letter representations of the days ofthe week
-const char PgMeal::_DOTW_CHAR_FALSE[DotwText::DAYS_IN_A_WEEK] =
-  { 'l', 'm', 'x', 'j', 'v', 's', 'd' };
-const char PgMeal::_DOTW_CHAR_TRUE[DotwText::DAYS_IN_A_WEEK] =
-  { 'L', 'M', 'X', 'J', 'V', 'S', 'D' };
-
 
 /***********/
 /* Methods */
@@ -48,6 +42,14 @@ PgMeal::PgMeal(Page *pParent, LiquidCrystal &Lcd, uint8_t Cols, uint8_t Rows):
   _Widgets[WgMinute] = &_WgMinute;
   _Widgets[WgQuantity] = &_WgQuantity;
   _Widgets[WgMeal] = &_WgMeal;
+
+  // Prepare the character representations of the DOTW in ES locale
+  for (uint8_t Dotw=0U; Dotw<DotwText::DAYS_IN_A_WEEK; Dotw++)
+  {
+    uint8_t DotwEn = DotwText::add(Dotw, 1U);
+    _DOTW_CHAR_TRUE[Dotw] = toupper(DotwText::DotwCharEs[DotwEn]);
+    _DOTW_CHAR_FALSE[Dotw] = tolower(DotwText::DotwCharEs[DotwEn]);
+  }
 }
 
 

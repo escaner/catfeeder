@@ -17,3 +17,15 @@ static const uint8_t AUGER_RPM = 15U;
 // How many 1/8th of a revolution should the auger be rotated for each meal
 // quantity unit
 static const uint8_t AUGER_EIGHTH_REVS_PER_MEAL_QTY = 2U;
+
+// FEED interval check in ms
+static const unsigned long FEED_CHECK_INTERVAL = 10000UL;
+
+// Main page time refresh
+static const unsigned long TIME_UPDATE_INTERVAL = 1000UL;
+
+// Iterations reading switch panel per lopp() call
+static const uint16_t SWITCH_LOOP_COUNT = 600U;
+
+// Time sice a meal is served to update the LCD next meal information in ms
+static const uint16_t MEAL_UPDATE_DELAY = 5U * 60U * 1000U;

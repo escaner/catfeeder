@@ -105,7 +105,7 @@ PageAction PgTime::event(const Event &E)
     }
     break;
 
-  case Event::EvTime:
+  case Event::EvTimeUtc:
     // Check if we requested it from focus()
     if (_State == StNeedUtc)
       // Yes, all data received, we can finish initialization

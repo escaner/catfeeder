@@ -74,6 +74,7 @@ void Feeds::reset(const DateTime &Now)
 
 /*
  *   Check whether it is time for a meal and returns the quantity to deliver.
+ *  It also updates the object for the next meal.
  *  Parameters:
  *  * Now: current official time
  *  Returns: quantity of food to deliver from 1 to 9; 0 means no meal
@@ -94,7 +95,7 @@ uint8_t Feeds::check(const DateTime &Now)
       reset(Now);
 
     // Once next meal is reset (or not), check normally
-    // Even if when reset, we know that there is at least one meal available:
+    // Even when reset, we know that there is at least one meal available:
     // the very dealt meal in one week time, so assert it:
     assert(_NextMealId != _ID_NULL);
 
@@ -109,7 +110,12 @@ uint8_t Feeds::check(const DateTime &Now)
 
         if (!_SkipNextMeal)
           Quantity = pMeal->getQuantity();
-        // else: skip it, Quantity = 0
+        else
+        {
+          // Reset skip for the next to this one we are skipping
+          _SkipNextMeal = false;
+          // skip this one: Quantity = 0
+        }
       }
       // else: already checked this very minute, Quantity = 0
     else
@@ -166,6 +172,7 @@ bool Feeds::isSkippingNext() const
  *  Returns:
  *  * NEXT_NONE: there are no active meals.
  *  * NEXT_OK: returns time for the next meal, which will be served.
+ *  * NEXT_SERVED: returns time for the last meal, which was already served
  *  * NEXT_SKIP: returns time for the next meal, but it is marked to be skipped.
  */
 Feeds::Next_t Feeds::timeOfNext(uint8_t *pDotw, uint8_t *pHour,
@@ -177,7 +184,9 @@ Feeds::Next_t Feeds::timeOfNext(uint8_t *pDotw, uint8_t *pHour,
     NextFeed = NEXT_NONE;  // No next meal, all disabled
   else
   {
-    if (_SkipNextMeal)
+    if (_NextMealDealt)
+      NextFeed = NEXT_SERVED;  // Meal already served but not updated
+    else if (_SkipNextMeal)
       NextFeed = NEXT_SKIP;  // Skipping next meal
     else
       NextFeed = NEXT_OK;  // Next meal will be served

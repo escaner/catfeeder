@@ -68,8 +68,8 @@ protected:
   static const char _TIME_TAG[];
 
   // Arrays with single letter representations of indexes
-  static const char _DOTW_CHAR_FALSE[DotwText::DAYS_IN_A_WEEK];
-  static const char _DOTW_CHAR_TRUE[DotwText::DAYS_IN_A_WEEK];
+  char _DOTW_CHAR_FALSE[DotwText::DAYS_IN_A_WEEK];
+  char _DOTW_CHAR_TRUE[DotwText::DAYS_IN_A_WEEK];
 
   // Protected methods
   void _init(Meal *pMeal);

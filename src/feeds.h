@@ -20,7 +20,8 @@ public:
   {
     NEXT_NONE = -1,
     NEXT_OK   = 0,
-    NEXT_SKIP = 1
+    NEXT_SERVED = 1,
+    NEXT_SKIP = 2
   };
 
   Feeds();

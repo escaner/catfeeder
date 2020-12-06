@@ -28,7 +28,7 @@ protected:
   static const uint8_t _NEXTMEAL_COL = 0U;
   static const uint8_t _NEXTMEAL_ROW = 1U;
   static const char _LINES[];
-  static const char _SKIP_TEXT[];
+  static const char _STATUS_TEXT[];
 
   // Protected methods
   void _drawTime(const DateTime &Time) const;

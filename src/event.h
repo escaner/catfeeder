@@ -2,7 +2,7 @@
 #define _EVENT_H_
 
 #include <RTClib.h>
-#include "meal.h"
+#include "feeds.h"
 
 
 /*
@@ -22,6 +22,7 @@ public:
     EvInit,     // Initialize, first draw
     EvSwitch,   // Switch (button) event
     EvTime,     // Carrying a DateTime class
+    EvTimeUtc,  // Carrying a DateTime class
     EvMeal,     // Carrying a Meal class
     EvNextMeal  // Carrying info about the next meal
   };
@@ -43,11 +44,12 @@ public:
     uint8_t Dotw;
     uint8_t Hour;
     uint8_t Minute;
-    bool Skip;
+    Feeds::Next_t Status;
   };
 
   // Constructor
   Event(EventId EvId): Id(EvId) {}
+
 
   /***************/
   /* Member data */
@@ -57,7 +59,7 @@ public:
   union
   {
     SwitchEvent Switch;   // Used by EvSwitch
-    DateTime Time;        // Used by EvTime
+    DateTime Time;        // Used by EvTime, EvTimeUtc
     Meal *pMeal;          // Used by EvMeal
     NextMeal_t NextMeal;  // Used by EvNextMeal;
   };
