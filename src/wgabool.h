@@ -1,6 +1,7 @@
 #ifndef _WGABOOL_H_
 #define _WGABOOL_H_
 
+#include "config.h"
 #include <Arduino.h>
 #include "widget.h"
 

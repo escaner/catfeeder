@@ -1,6 +1,7 @@
 #ifndef _WIDGET_H_
 #define _WIDGET_H_
 
+#include "config.h"
 #include <Arduino.h>
 #include <LiquidCrystal.h>
 #include "event.h"

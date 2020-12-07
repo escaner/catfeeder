@@ -1,6 +1,7 @@
 #ifndef _AUGER_H_
 #define _AUGER_H_
 
+#include "config.h"
 #include <Arduino.h>
 
 

@@ -1,6 +1,7 @@
 #ifndef _DOTWTEXT_H_
 #define _DOTWTEXT_H_
 
+#include "config.h"
 #include <Arduino.h>
 
 

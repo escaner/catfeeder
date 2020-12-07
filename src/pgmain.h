@@ -1,6 +1,7 @@
 #ifndef _PGMAIN_H_
 #define _PGMAIN_H_
 
+#include "config.h"
 #include <Arduino.h>
 #include "pgconfig.h"
 

@@ -1,6 +1,7 @@
 #ifndef _PGCONFIG_H_
 #define _PGCONFIG_H_
 
+#include "config.h"
 #include <Arduino.h>
 #include "page.h"
 #include "pgtime.h"

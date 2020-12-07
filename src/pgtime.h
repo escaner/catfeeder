@@ -1,6 +1,7 @@
 #ifndef _PGTIME_H_
 #define _PGTIME_H_
 
+#include "config.h"
 #include <Arduino.h>
 #include "page.h"
 #include "wgint.h"

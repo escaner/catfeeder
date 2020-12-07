@@ -1,6 +1,7 @@
 #ifndef _FEEDS_H_
 #define _FEEDS_H_
 
+#include "config.h"
 #include <Arduino.h>
 #include <RTClib.h>
 #include "config.h"

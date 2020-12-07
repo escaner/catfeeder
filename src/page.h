@@ -1,6 +1,7 @@
 #ifndef _PAGE_H_
 #define _PAGE_H_
 
+#include "config.h"
 #include <Arduino.h>
 #include <LiquidCrystal.h>
 #include "event.h"

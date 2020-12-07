@@ -1,6 +1,7 @@
 #ifndef _WGSELECT_H_
 #define _WGSELECT_H_
 
+#include "config.h"
 #include <Arduino.h>
 #include "widget.h"
 

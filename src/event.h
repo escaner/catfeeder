@@ -1,6 +1,7 @@
 #ifndef _EVENT_H_
 #define _EVENT_H_
 
+#include "config.h"
 #include <Arduino.h>
 #include <RTClib.h>
 #include "feeds.h"

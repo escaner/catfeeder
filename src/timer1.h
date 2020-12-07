@@ -1,6 +1,9 @@
 #ifndef _TIMER1_H_
 #define _TIMER1_H_
 
+#include "config.h"
+
+
 /*
  *   Handles timer1 and allow switching the Interrupt
  *  Server Routine.

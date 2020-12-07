@@ -1,6 +1,7 @@
 #ifndef _MEAL_H_
 #define _MEAL_H_
 
+#include "config.h"
 #include <Arduino.h>
 #include <RTClib.h>
 

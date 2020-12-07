@@ -1,6 +1,7 @@
 #ifndef _ACTION_H_
 #define _ACTION_H_
 
+#include "config.h"
 #include <Arduino.h>
 #include <RTClib.h>
 #include "meal.h"
