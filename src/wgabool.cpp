@@ -40,22 +40,20 @@ void _isrWgAboolBlink()
  *  It can change from call to call.
  *  Parameters:
  *  * Lcd: reference to the lcd display that is being used.
- *  * Cols: number of columns in the LCD.
- *  * Rows: number of rows in the LCD.
  *  * PosX: column where to start displaying the widget.
  *  * PosY: row where to start displaying the widget.
  *  * pCharTrue: array with char to display when the value is true
  *  * pCharFalse: array with char to display when the value is false
  *  * Size: size of the arrays and of the widget (number of bools)
  */
-WgAbool::WgAbool(LiquidCrystal &Lcd, uint8_t Cols, uint8_t Rows, uint8_t PosX,
-    uint8_t PosY, const char *pCharTrue, const char *pCharFalse, uint8_t Size):
-  Widget(Lcd, Cols, Rows),
+WgAbool::WgAbool(LiquidCrystal &Lcd, uint8_t PosX, uint8_t PosY,
+    const char *pCharTrue, const char *pCharFalse, uint8_t Size):
+  Widget(Lcd),
   _X(PosX),
   _Y(PosY),
+  _Size(Size),
   _pCharTrue(pCharTrue),
-  _pCharFalse(pCharFalse),
-  _Size(Size)
+  _pCharFalse(pCharFalse)
 {
   assert(Size > 0U);
 }
@@ -102,6 +100,10 @@ int8_t WgAbool::event(const Event &E)
 {
   int8_t Ac = AcNone;  // Default action initialized
 
+#pragma GCC diagnostic push
+// Disable: warning: enumeration value not handled in switch
+#pragma GCC diagnostic ignored "-Wswitch"
+
   // Only process switch events, ignore the rest
   if (E.Id == Event::EvSwitch)
     switch (E.Switch)
@@ -135,6 +137,8 @@ int8_t WgAbool::event(const Event &E)
       Ac = AcBack;
       break;
     }
+
+#pragma GCC diagnostic pop
 
   return Ac;
 }

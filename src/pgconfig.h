@@ -15,7 +15,7 @@
 class PgConfig: public Page
 {
 public:
-  PgConfig(Page *pParent, LiquidCrystal &Lcd, uint8_t Cols, uint8_t Rows);
+  PgConfig(Page *pParent, LiquidCrystal &Lcd);
   virtual PageAction focus();
   virtual PageAction event(const Event &E);
 

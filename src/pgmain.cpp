@@ -32,14 +32,12 @@ const char PgMain::_STATUS_TEXT[][_NEXTMEAL_STATUS_SIZE+1U] =
  *   Constructor.
  *  Paramters:
  *  * Lcd: reference to the lcd display that is being used.
- *  * Cols: number of columns in the LCD.
- *  * Rows: number of rows in the LCD.
  */
-PgMain::PgMain(LiquidCrystal &Lcd, uint8_t Cols, uint8_t Rows):
-  Page(Lcd, Cols, Rows),
+PgMain::PgMain(LiquidCrystal &Lcd):
+  Page(Lcd),
   _State(StOk),
   _ManFeeding(false),
-  _PgConfig(this, Lcd, Cols, Rows)
+  _PgConfig(this, Lcd)
 {
 }
 
@@ -78,6 +76,7 @@ PageAction PgMain::event(const Event &E)
 #pragma GCC diagnostic push
 // Disable: warning: enumeration value Ev* & SwEv* not handled in switch
 #pragma GCC diagnostic ignored "-Wswitch"
+
   switch (E.Id)
   {
   case Event::EvInit:
@@ -139,6 +138,7 @@ PageAction PgMain::event(const Event &E)
     // We don't need more data: no action
     break;
   }
+
 #pragma GCC diagnostic pop
 
   // Default: no action
@@ -153,7 +153,7 @@ PageAction PgMain::event(const Event &E)
  */
 void PgMain::_drawTime(const DateTime &Time) const
 {
-  char Line[_COLS+1];  // Plus end of string
+  char Line[DISPLAY_COLS+1];  // Plus end of string
   char Dotw;
   uint8_t Year;
 
@@ -168,7 +168,7 @@ void PgMain::_drawTime(const DateTime &Time) const
   // Generate line to write
   sprintf(Line, _LINES[0],
     Time.hour(), Time.minute(), Dotw, Time.day(), Time.month(), Year);
-  assert(strlen(Line) == _COLS);
+  assert(strlen(Line) == DISPLAY_COLS);
 
   // Write line in LCD
   _Lcd.write(Line);
@@ -182,7 +182,7 @@ void PgMain::_drawTime(const DateTime &Time) const
  */
 void PgMain::_drawNextMeal(const Event::NextMeal_t &NextMeal) const
 {
-  char Line[_COLS+1];  // Plus end of string
+  char Line[DISPLAY_COLS+1];  // Plus end of string
   char Dotw;
   const char *pStatus;
 
@@ -194,7 +194,7 @@ void PgMain::_drawNextMeal(const Event::NextMeal_t &NextMeal) const
   assert(NextMeal.Status >= 0);
   pStatus = _STATUS_TEXT[NextMeal.Status];
   sprintf(Line, _LINES[1], NextMeal.Hour, NextMeal.Minute, Dotw, pStatus);
-  assert(strlen(Line) == _COLS);
+  assert(strlen(Line) == DISPLAY_COLS);
 
   // Write line in LCD
   _Lcd.write(Line);

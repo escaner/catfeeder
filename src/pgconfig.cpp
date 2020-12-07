@@ -23,16 +23,13 @@ const char *const PgConfig::_LINES[] =
  *  Paramters:
  *  * pParent: parent Page where to return the focus on exit
  *  * Lcd: reference to the lcd display that is being used.
- *  * Cols: number of columns in the LCD.
- *  * Rows: number of rows in the LCD.
  */
-PgConfig::PgConfig(Page *pParent, LiquidCrystal &Lcd, uint8_t Cols,
-    uint8_t Rows):
-  Page(Lcd, Cols, Rows),
+PgConfig::PgConfig(Page *pParent, LiquidCrystal &Lcd):
+  Page(Lcd),
   _pParent(pParent),
-  _Select(Lcd, Cols, Rows, true),
-  _PgMeal(this, Lcd, Cols, Rows),
-  _PgTime(this, Lcd, Cols, Rows)
+  _Select(Lcd, true),
+  _PgMeal(this, Lcd),
+  _PgTime(this, Lcd)
 {
 }
 

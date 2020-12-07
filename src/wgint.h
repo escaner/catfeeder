@@ -17,8 +17,7 @@ void _isrWgIntBlink();
 class WgInt: public Widget
 {
 public:
-  WgInt(LiquidCrystal &Lcd, uint8_t Cols, uint8_t Rows,
-    uint8_t PosX, uint8_t PosY, uint8_t Size);
+  WgInt(LiquidCrystal &Lcd, uint8_t PosX, uint8_t PosY, uint8_t Size);
   void init(uint16_t MinValue, uint16_t MaxValue, uint16_t *pValue);
 
   virtual void focus();

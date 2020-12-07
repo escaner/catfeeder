@@ -45,6 +45,7 @@ public:
 #pragma GCC diagnostic push
 // Disable: warning: enumeration value not handled in switch
 #pragma GCC diagnostic ignored "-Wswitch"
+
     switch (Id)
     {
     case AcNeedMeal:
@@ -55,6 +56,7 @@ public:
       Time = Ac.Time;
       break;
     }
+
 #pragma GCC diagnostic pop
   }
 

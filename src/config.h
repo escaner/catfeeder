@@ -2,6 +2,7 @@
 #define _CONFIG_H_
 
 #define NDEBUG
+#define NDEBUG_SERIAL
 #define __ASSERT_USE_STDERR
 
 #include <Arduino.h>
@@ -40,8 +41,8 @@ static const uint16_t SWITCH_LOOP_COUNT = 600U;
 static const uint16_t MEAL_UPDATE_DELAY = 5U * 60U * 1000U;
 
 /* Display */
-//static const uint8_t DISPLAY_ROWS = 2U;
-//static const uint8_t DISPLAY_COLS = 16U;
+static const uint8_t DISPLAY_ROWS = 2U;
+static const uint8_t DISPLAY_COLS = 16U;
 
 
 #endif  // _CONFIG_H_

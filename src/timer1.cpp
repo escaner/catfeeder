@@ -7,9 +7,9 @@
 /* Module constants */
 /********************/
 
-static const uint8_t _Ocr = 3906U;  // Output compare register value
-static const byte _TccrCtcOcr1a = _BV(WGM12);  // CTC OCR1A mode for TCCR
-static const byte _Tccr1024 = _BV(CS12) | _BV(CS10);  // 1024 divider
+static const uint16_t _OCR = 3906U;  // Output compare register value
+static const byte _TCCR_CTC_OCR1A = _BV(WGM12);  // CTC OCR1A mode for TCCR
+static const byte _TCCR_1024 = _BV(CS12) | _BV(CS10);  // 1024 divider
 
 static void (*_pIsrFunction)();
 
@@ -43,8 +43,8 @@ void enableIsr(void (*pIsrFunction)())
   noInterrupts();
 
   TCCR1A = 0;
-  TCCR1B = _TccrCtcOcr1a | _Tccr1024;  // CTC mode for OCR1A & 1024 divider
-  OCR1A = 3906U;  // 16MHz / 1024 / 4MHz
+  TCCR1B = _TCCR_CTC_OCR1A | _TCCR_1024;  // CTC mode for OCR1A & 1024 divider
+  OCR1A = _OCR;  // 16MHz / 1024 / 4MHz
   TIMSK1 |= _BV(OCIE1A);  // Enable match interrupts on Output Compare A
 
   interrupts();
@@ -54,7 +54,7 @@ void enableIsr(void (*pIsrFunction)())
 /*
  *   Disables interrupts.
  */
-static void disableIsr()
+void disableIsr()
 {
   noInterrupts();
 

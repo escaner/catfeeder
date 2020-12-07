@@ -36,9 +36,7 @@ class Page
 {
 public:
   // Constructor definition
-  Page(LiquidCrystal &Lcd, uint8_t Cols, uint8_t Rows):
-    _COLS(Cols),
-    _ROWS(Rows),
+  Page(LiquidCrystal &Lcd):
     _Lcd(Lcd)
   {
   }
@@ -49,8 +47,6 @@ public:
 
 protected:
   // Member data
-  const uint8_t _COLS;
-  const uint8_t _ROWS;
   LiquidCrystal &_Lcd;
 };
 

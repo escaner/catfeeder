@@ -12,7 +12,7 @@
 class PgTime: public Page
 {
 public:
-  PgTime(Page *pParent, LiquidCrystal &Lcd, uint8_t Cols, uint8_t Rows);
+  PgTime(Page *pParent, LiquidCrystal &Lcd);
   virtual PageAction focus();
   virtual PageAction event(const Event &E);
 

@@ -12,7 +12,7 @@
 class PgMain: public Page
 {
 public:
-  PgMain(LiquidCrystal &Lcd, uint8_t Cols, uint8_t Rows);
+  PgMain(LiquidCrystal &Lcd);
   virtual PageAction focus();
   virtual PageAction event(const Event &E);
 

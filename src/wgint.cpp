@@ -40,15 +40,12 @@ void _isrWgIntBlink()
  *  are not initialized. They can change from call to call.
  *  Parameters:
  *  * Lcd: reference to the lcd display that is being used.
- *  * Cols: number of columns in the LCD.
- *  * Rows: number of rows in the LCD.
  *  * PosX: column where to start displaying the widget.
  *  * PosY: row where to start displaying the widget.
  *  * Size: size of the arrays and of the widget (number of bools)
  */
-WgInt::WgInt(LiquidCrystal &Lcd, uint8_t Cols, uint8_t Rows,
-    uint8_t PosX, uint8_t PosY, uint8_t Size):
-  Widget(Lcd, Cols, Rows),
+WgInt::WgInt(LiquidCrystal &Lcd, uint8_t PosX, uint8_t PosY, uint8_t Size):
+  Widget(Lcd),
   _X(PosX),
   _Y(PosY),
   _Size(Size)
@@ -107,6 +104,10 @@ int8_t WgInt::event(const Event &E)
 {
   int8_t Ac = AcNone;  // Default action initialized
 
+#pragma GCC diagnostic push
+// Disable: warning: enumeration value not handled in switch
+#pragma GCC diagnostic ignored "-Wswitch"
+ 
   // Only process switch events, ignore the rest
   if (E.Id == Event::EvSwitch)
     switch (E.Switch)
@@ -134,6 +135,8 @@ int8_t WgInt::event(const Event &E)
       Ac = AcBack;
       break;
     }
+
+#pragma GCC diagnostic pop
 
   return Ac;
 }

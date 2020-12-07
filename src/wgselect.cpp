@@ -16,10 +16,12 @@ const uint8_t WgSelect::_Coord4Opt[4][2] = { {0, 0}, {8, 0}, {0, 1}, {8, 1} };
 
 /*
  *   Constructor. Initializes the object as a 2 or 4 select widget.
+ *  Parameters:
+ *  * Lcd: reference to the lcd display that is being used.
+ *  * FourOptions: true iff widget has 4 available options, 2 otherwise
  */
-WgSelect::WgSelect(LiquidCrystal &Lcd, uint8_t Cols, uint8_t Rows,
-    bool FourOptions):
-  Widget(Lcd, Cols, Rows),
+WgSelect::WgSelect(LiquidCrystal &Lcd, bool FourOptions):
+  Widget(Lcd),
   _NumOptions(FourOptions? 4U: 2U),
   _CoordOpt(FourOptions? _Coord4Opt: _Coord2Opt)
 {
@@ -50,6 +52,10 @@ int8_t WgSelect::event(const Event &E)
 {
   int8_t Ac = AcNone;  // Default action initialized
 
+#pragma GCC diagnostic push
+// Disable: warning: enumeration value not handled in switch
+#pragma GCC diagnostic ignored "-Wswitch"
+
   // Only process switch events, ignore the rest
   if (E.Id == Event::EvSwitch)
     switch (E.Switch)
@@ -77,6 +83,8 @@ int8_t WgSelect::event(const Event &E)
       Ac = AcBack;
       break;
     }
+
+#pragma GCC diagnostic pop
 
   return Ac;
 }

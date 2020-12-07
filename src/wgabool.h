@@ -17,8 +17,8 @@ void _isrWgAboolBlink();
 class WgAbool: public Widget
 {
 public:
-  WgAbool(LiquidCrystal &Lcd, uint8_t Cols, uint8_t Rows, uint8_t PosX,
-    uint8_t PosY, const char *pCharTrue, const char *pCharFalse, uint8_t Size);
+  WgAbool(LiquidCrystal &Lcd, uint8_t PosX, uint8_t PosY, const char *pCharTrue,
+    const char *pCharFalse, uint8_t Size);
   void init(bool *pValues);
 
   virtual void focus();

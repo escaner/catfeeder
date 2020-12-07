@@ -45,13 +45,19 @@ Event::SwitchEvent SwitchPnl::check()
 {
   uint8_t Val0, Val1;
   int8_t StepSelect;
-  Switch::Flank Flank;
 
   // Check Select encoder
   Val0 = digitalRead(_PinSelectA);
   Val1 = digitalRead(_PinSelectB);
-  if (StepSelect = _Select.update(Val0, Val1))
-    return StepSelect < 0? Event::SwEvSelectCcw: Event::SwEvSelectCw;
+  StepSelect = _Select.update(Val0, Val1);
+  if (StepSelect < 0)
+    return Event::SwEvSelectCcw;
+  else if (StepSelect > 0)
+    return Event::SwEvSelectCw;
+
+#pragma GCC diagnostic push
+// Disable: warning: enumeration value 'FLANK_NONE' not handled in switch
+#pragma GCC diagnostic ignored "-Wswitch"
 
   // Check Enter button: falling flank is button press
   Val0 = digitalRead(_PinEnter);
@@ -72,6 +78,8 @@ Event::SwitchEvent SwitchPnl::check()
   case Switch::FLANK_RISING:
     return Event::SwEvBackRelease;
   }
-  
+
+ #pragma GCC diagnostic pop
+ 
   return Event::SwEvNone;
 }

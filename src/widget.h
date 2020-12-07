@@ -14,9 +14,7 @@ public:
   static const int8_t AcNone = -2;
   static const int8_t AcBack = -3;
 
-  Widget(LiquidCrystal &Lcd, uint8_t Cols, uint8_t Rows):
-    _COLS(Cols),
-    _ROWS(Rows),
+  Widget(LiquidCrystal &Lcd):
     _Lcd(Lcd)
   {
   }
@@ -27,8 +25,6 @@ public:
 
 protected:
   // Member data
-  const uint8_t _COLS;
-  const uint8_t _ROWS;
   LiquidCrystal &_Lcd;
 };
 

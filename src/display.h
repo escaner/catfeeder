@@ -19,10 +19,6 @@ public:
   void error(const char *pMsg);
 
 protected:
-  // Display constants
-  static const uint8_t _COLS = 16U;
-  static const uint8_t _ROWS = 2U;
-
   // Member data
   LiquidCrystal _Lcd;  // LCD control class
   PgMain _PgMain;      // Main page

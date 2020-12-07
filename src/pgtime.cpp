@@ -24,20 +24,18 @@ const char PgTime::_DATE_TAG[] = "UTC";
  *  Parameters:
  *  * pParent: parent Page where to return the focus on exit
  *  * Lcd: reference to the lcd display that is being used.
- *  * Cols: number of columns in the LCD.
- *  * Rows: number of rows in the LCD.
  */
-PgTime::PgTime(Page *pParent, LiquidCrystal &Lcd, uint8_t Cols, uint8_t Rows):
-  Page(Lcd, Cols, Rows),
+PgTime::PgTime(Page *pParent, LiquidCrystal &Lcd):
+  Page(Lcd),
   _State(StOk),
   _pParent(pParent),
   _Widgets{
-    WgInt(Lcd, Cols, Rows, _TIME_HOUR_COL, _TIME_ROW, _TIME_HOUR_SIZE),
-    WgInt(Lcd, Cols, Rows, _TIME_MINUTE_COL, _TIME_ROW, _TIME_MINUTE_SIZE),
-    WgInt(Lcd, Cols, Rows, _TIME_SECOND_COL, _TIME_ROW, _TIME_SECOND_SIZE),
-    WgInt(Lcd, Cols, Rows, _DATE_DAY_COL, _DATE_ROW, _DATE_DAY_SIZE),
-    WgInt(Lcd, Cols, Rows, _DATE_MONTH_COL, _DATE_ROW, _DATE_MONTH_SIZE),
-    WgInt(Lcd, Cols, Rows, _DATE_YEAR_COL, _DATE_ROW, _DATE_YEAR_SIZE)
+    WgInt(Lcd, _TIME_HOUR_COL, _TIME_ROW, _TIME_HOUR_SIZE),
+    WgInt(Lcd, _TIME_MINUTE_COL, _TIME_ROW, _TIME_MINUTE_SIZE),
+    WgInt(Lcd, _TIME_SECOND_COL, _TIME_ROW, _TIME_SECOND_SIZE),
+    WgInt(Lcd, _DATE_DAY_COL, _DATE_ROW, _DATE_DAY_SIZE),
+    WgInt(Lcd, _DATE_MONTH_COL, _DATE_ROW, _DATE_MONTH_SIZE),
+    WgInt(Lcd, _DATE_YEAR_COL, _DATE_ROW, _DATE_YEAR_SIZE)
   }
 {
 }
@@ -73,6 +71,10 @@ PageAction PgTime::focus()
  */
 PageAction PgTime::event(const Event &E)
 {
+#pragma GCC diagnostic push
+// Disable: warning: enumeration value not handled in switch
+#pragma GCC diagnostic ignored "-Wswitch"
+
   switch (E.Id)
   {
   case Event::EvInit:
@@ -116,6 +118,8 @@ PageAction PgTime::event(const Event &E)
     // We don't need any more data -> return no action
     break;
   }
+
+#pragma GCC diagnostic pop
 
   // Default: no action
   return PageAction();
@@ -211,5 +215,5 @@ bool PgTime::_validDate() const
  */
 bool PgTime::_leapYear(uint16_t Year) const
 {
-  return Year%4==0 && Year%100!=0 || Year%400==0;
+  return (Year%4==0 && Year%100!=0) || Year%400==0;
 }

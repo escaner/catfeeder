@@ -59,6 +59,7 @@ public:
 #pragma GCC diagnostic push
 // Disable: warning: enumeration value 'EvInit' not handled in switch
 #pragma GCC diagnostic ignored "-Wswitch"
+
   switch (Id)
     {
     case EvSwitch:
@@ -75,6 +76,7 @@ public:
       NextMeal = Ev.NextMeal;
       break;
     }
+
 #pragma GCC diagnostic pop
   }
 

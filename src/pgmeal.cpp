@@ -21,21 +21,18 @@ const char PgMeal::_TIME_TAG[] = "CANTIDAD";
  *  Parameters:
  *  * pParent: parent Page where to return the focus on exit
  *  * Lcd: reference to the lcd display that is being used.
- *  * Cols: number of columns in the LCD.
- *  * Rows: number of rows in the LCD.
  */
-PgMeal::PgMeal(Page *pParent, LiquidCrystal &Lcd, uint8_t Cols, uint8_t Rows):
-  Page(Lcd, Cols, Rows),
+PgMeal::PgMeal(Page *pParent, LiquidCrystal &Lcd):
+  Page(Lcd),
   _State(StOk),
   _pParent(pParent),
   _Initialized(false),
-  _WgDotw(Lcd, Cols, Rows, _MEAL_DOTW_COL, _MEAL_ROW, _DOTW_CHAR_TRUE,
-    _DOTW_CHAR_FALSE, DotwText::DAYS_IN_A_WEEK),
-  _WgMeal(Lcd, Cols, Rows, _MEAL_MEAL_COL, _MEAL_ROW, _MEAL_MEAL_SIZE),
-  _WgHour(Lcd, Cols, Rows, _TIME_HOUR_COL, _TIME_ROW, _TIME_HOUR_SIZE),
-  _WgMinute(Lcd, Cols, Rows, _TIME_MINUTE_COL, _TIME_ROW, _TIME_MINUTE_SIZE),
-  _WgQuantity(Lcd, Cols, Rows, _TIME_QUANTITY_COL, _TIME_ROW,
-    _TIME_QUANTITY_SIZE)
+  _WgDotw(Lcd, _MEAL_DOTW_COL, _MEAL_ROW, _DOTW_CHAR_TRUE, _DOTW_CHAR_FALSE,
+    DotwText::DAYS_IN_A_WEEK),
+  _WgMeal(Lcd, _MEAL_MEAL_COL, _MEAL_ROW, _MEAL_MEAL_SIZE),
+  _WgHour(Lcd, _TIME_HOUR_COL, _TIME_ROW, _TIME_HOUR_SIZE),
+  _WgMinute(Lcd, _TIME_MINUTE_COL, _TIME_ROW, _TIME_MINUTE_SIZE),
+  _WgQuantity(Lcd, _TIME_QUANTITY_COL, _TIME_ROW, _TIME_QUANTITY_SIZE)
 {
   // Array for easy management of the time widgets
   _Widgets[WgDotw] = &_WgDotw;
@@ -85,6 +82,10 @@ PageAction PgMeal::focus()
 PageAction PgMeal::event(const Event &E)
 {
   uint16_t MealId;
+
+#pragma GCC diagnostic push
+// Disable: warning: enumeration value not handled in switch
+#pragma GCC diagnostic ignored "-Wswitch"
 
   switch (E.Id)
   {
@@ -153,6 +154,8 @@ PageAction PgMeal::event(const Event &E)
     // We don't need any more data -> return no action
     break;
   }
+
+#pragma GCC diagnostic pop
 
   // Default: no action
   return PageAction();
