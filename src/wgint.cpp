@@ -77,16 +77,18 @@ void WgInt::init(uint16_t MinValue, uint16_t MaxValue, uint16_t *pValue)
   // Initialize data
   _MinValue = MinValue;
   _MaxValue = MaxValue;
-  *_pValue = *pValue;
+  _pValue = pValue;
+
+  // Display value
+  _draw();
 }
 
 
 /*
- *   Display value on the LCD and start blinking.
+ *   Star blinking the value in the LCD.
  */
 void WgInt::focus()
 {
-  _draw();
   _blinkOn();
 }
 
@@ -114,18 +116,18 @@ int8_t WgInt::event(const Event &E)
     {
     case Event::SwEvSelectCw:
       // Decrease value option and update LCD while blinking
-      _decrement();
+      _increment();
       _drawBlinking();
       // Ac = AcNone;
       break;
     case Event::SwEvSelectCcw:
       // Increase value option and update LCD while blinking
-      _increment();
+      _decrement();
       _drawBlinking();
       // Ac = AcNone;
       break;
     case Event::SwEvEnterPress:
-      // Return OK. Currently selected *pValue is accepted and disble blinking
+      // Return OK. Currently selected *pValue is accepted and disable blinking
       _blinkOff();
       Ac = AcOk;
       break;
@@ -148,12 +150,18 @@ int8_t WgInt::event(const Event &E)
 void WgInt::_draw() const
 {
   char szValue[_Size + 1];
+  char szFormat[] = "%0*u";
+
+  // Arduino sprintf does not suport field size in a paramter: do it manually
+  assert(_Size < 10U);
+  szFormat[2] = '0' + _Size;
 
   // Move cursor to widget place
   _Lcd.setCursor(_X, _Y);
 
-  // Convert value to text. Is should fit.
-  sprintf(szValue, "%0*d", _Size, *_pValue);
+  // Convert value to text. It should fit.
+  //  sprintf(szValue, "%0*u", (int) _Size, *_pValue);
+  sprintf(szValue, szFormat, *_pValue);
   _Lcd.write(szValue);
 }
 
@@ -187,7 +195,7 @@ void WgInt::_drawBlinking() const
     _draw();
 
   // Exit the MUTEX
-      interrupts();
+  interrupts();
 }
 
 
@@ -212,6 +220,10 @@ void WgInt::_blinkOff() const
 {
   // Disable ISR for blinking
   disableIsr();
+
+  // If it left in clear state, draw it
+  if (_BlinkClear)
+    _draw();
 }
 
 

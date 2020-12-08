@@ -52,12 +52,10 @@ protected:
 
   // Positions of widgets and tags
   static const uint8_t _MEAL_ROW = 0U;
-  static const uint8_t _MEAL_TAG_COL = 0U;
   static const uint8_t _MEAL_MEAL_COL = 7U;
   static const uint8_t _MEAL_MEAL_SIZE = 1U;
   static const uint8_t _MEAL_DOTW_COL = 9U;
   static const uint8_t _TIME_ROW = 1U;
-  static const uint8_t _TIME_TAG_COL = 6U;
   static const uint8_t _TIME_HOUR_COL = 0U;
   static const uint8_t _TIME_HOUR_SIZE = 2U;
   static const uint8_t _TIME_MINUTE_COL = 3U;
@@ -66,8 +64,7 @@ protected:
   static const uint8_t _TIME_QUANTITY_SIZE = 1U;
 
   // Static tags in the display
-  static const char _MEAL_TAG[];
-  static const char _TIME_TAG[];
+  static const char _LINES[DISPLAY_ROWS][DISPLAY_COLS+1];
 
   // Arrays with single letter representations of indexes
   char _DOTW_CHAR_FALSE[DotwText::DAYS_IN_A_WEEK];

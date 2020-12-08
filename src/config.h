@@ -2,7 +2,7 @@
 #define _CONFIG_H_
 
 #define NDEBUG
-#define NDEBUG_SERIAL
+//#define NDEBUG_SERIAL
 #define __ASSERT_USE_STDERR
 
 #include <Arduino.h>
@@ -29,13 +29,13 @@ static const uint8_t AUGER_RPM = 15U;
 static const uint8_t AUGER_EIGHTH_REVS_PER_MEAL_QTY = 2U;
 
 // FEED interval check in ms
-static const unsigned long FEED_CHECK_INTERVAL = 10000UL;
+static const unsigned long FEED_CHECK_INTERVAL = 50000UL;
 
 // Main page time refresh
-static const unsigned long TIME_UPDATE_INTERVAL = 1000UL;
+static const unsigned long TIME_UPDATE_INTERVAL = 15000UL;
 
-// Iterations reading switch panel per lopp() call
-static const uint16_t SWITCH_LOOP_COUNT = 600U;
+// Iterations reading switch panel per loop() call
+static const uint16_t SWITCH_LOOP_COUNT = 2000U;
 
 // Time sice a meal is served to update the LCD next meal information in ms
 static const uint16_t MEAL_UPDATE_DELAY = 5U * 60U * 1000U;

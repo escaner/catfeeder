@@ -25,6 +25,10 @@ public:
   PageAction(Page *pPage): pFocusPage(pPage), MainAction() {}
   PageAction(Page *pPage, const Action &A): pFocusPage(pPage), MainAction(A) {}
 
+  // Copy constructor
+  PageAction(const PageAction &PgAc): pFocusPage(PgAc.pFocusPage),
+    MainAction(PgAc.MainAction) {}
+
   Page *pFocusPage;  // nullprt or new focus Page
   Action MainAction;
 };

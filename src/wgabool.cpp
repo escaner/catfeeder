@@ -68,17 +68,17 @@ void WgAbool::init(bool *pValues)
 {
   // Save in/out array for the values
   _pValues = pValues;
+
+  // Display all the corresponding values in the widget
+  _drawAll();
 }
 
 
 /*
- *   Display value on the LCD and start blinking.
+ *   Start blinking first position in the array.
  */
 void WgAbool::focus()
 {
-  // Display all the corresponding values in the widget
-  _drawAll();
-
   // Select initial position in the array
   _CurPos = 0U;
 
@@ -132,8 +132,6 @@ int8_t WgAbool::event(const Event &E)
     case Event::SwEvBackPress:
       // Signal to exit; disble blinking
       _blinkOff();
-      if (!_BlinkClear)
-        _draw();
       Ac = AcBack;
       break;
     }
@@ -255,4 +253,8 @@ void WgAbool::_blinkOff() const
 {
   // Disable ISR for blinking
   disableIsr();
+
+  // If it left in clear state, draw it
+  if (_BlinkClear)
+    _draw();
 }

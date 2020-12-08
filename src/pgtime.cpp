@@ -10,9 +10,12 @@
 const uint8_t PgTime::_NUM_DAYS_PER_MONTH[] =
   { 31U, 28U, 31U, 30U, 31U, 30U, 31U, 31U, 30U, 31U, 30U, 31U };
 
-  // Static tags in the display
-const char PgTime::_TIME_TAG[] = "TIEMPO";
-const char PgTime::_DATE_TAG[] = "UTC";
+// Static tags in the display
+const char PgTime::_LINES[DISPLAY_ROWS][DISPLAY_COLS+1] =
+{
+  "TIEMPO    :  :  ",
+  "UTC     /  /    "
+};
 
 
 /***********/
@@ -111,10 +114,12 @@ PageAction PgTime::event(const Event &E)
   case Event::EvTimeUtc:
     // Check if we requested it from focus()
     if (_State == StNeedUtc)
+    {
       // Yes, all data received, we can finish initialization
       _State = StOk;
-    // Initialize page and widgets
-    _init(E.Time);
+      // Initialize page and widgets
+      _init(E.Time);
+    }
     // We don't need any more data -> return no action
     break;
   }
@@ -133,12 +138,6 @@ PageAction PgTime::event(const Event &E)
  */
 void PgTime::_init(const DateTime &Time)
 {
-  // Display tags in the LCD
-  _Lcd.setCursor(_TIME_TAG_COL, _TIME_ROW);
-  _Lcd.write(_TIME_TAG);
-  _Lcd.setCursor(_DATE_TAG_COL, _DATE_ROW);
-  _Lcd.write(_DATE_TAG);
-
   // Initialize values
   _Values[WgHour] = Time.hour();
   _Values[WgMinute] = Time.minute();
@@ -147,7 +146,13 @@ void PgTime::_init(const DateTime &Time)
   _Values[WgMonth] = Time.month();
   _Values[WgYear] = Time.year();
 
-  // Initialize widgets
+   // Draw page
+  _Lcd.setCursor(0, _TIME_ROW);
+  _Lcd.write(_LINES[_TIME_ROW]);
+  _Lcd.setCursor(0, _DATE_ROW);
+  _Lcd.write(_LINES[_DATE_ROW]);
+
+  // Initialize & draw widgets
   _Widgets[WgHour].init(_MIN_HOUR, _MAX_HOUR, _Values+WgHour);
   _Widgets[WgMinute].init(_MIN_MINUTE, _MAX_MINUTE, _Values+WgMinute);
   _Widgets[WgSecond].init(_MIN_SECOND, _MAX_SECOND, _Values+WgSecond);
@@ -156,7 +161,7 @@ void PgTime::_init(const DateTime &Time)
   _Widgets[WgYear].init(_MIN_YEAR, _MAX_YEAR, _Values+WgYear);
 
   // Set focus on hour
-  _Widgets[_FocusWidget = WgHour].focus();
+  _focusWidget(WgHour);
 }
 
 

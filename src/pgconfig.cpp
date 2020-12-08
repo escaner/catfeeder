@@ -7,7 +7,7 @@
 /********************/
 
 // Text to display in the page
-const char *const PgConfig::_LINES[] =
+const char PgConfig::_LINES[DISPLAY_ROWS][DISPLAY_COLS+1] =
 {
   " SALTAR  NO SALT",
   " HORA    COMIDAS"
@@ -74,11 +74,11 @@ PageAction PgConfig::event(const Event &E)
     // Unskip next meal
     return PageAction(Action::AcUnskipMeal);
   case 2:
-    // Go to config meals page
-    return PageAction(&_PgMeal);
-  case 3:
     // Go to config time page
     return PageAction(&_PgTime);
+  case 3:
+    // Go to config meals page
+    return PageAction(&_PgMeal);
   case Widget::AcBack:
     // Go back to parent page
     return PageAction(_pParent);

@@ -19,7 +19,7 @@ static const uint8_t NUM_BUTTONS = 2U;  // Number of swtiches of type button
 
 // ARDUINO NANO connections
 // Switches
-static const uint8_t PIN_ENC[ENC_NUM_PINS] = { 2, 3 };
+static const uint8_t PIN_ENC[ENC_NUM_PINS] = { 9, 10 };
 static const uint8_t PIN_BTN_ENT = 0; /* RX0 */
 static const uint8_t PIN_BTN_BCK = 1; /* TX1 */
 // Display
@@ -45,7 +45,7 @@ static const uint8_t PIN_ED_STEP = 4;
 /*************/
 
 // Object to control feeding times
-Feeds FeedData;
+static Feeds FeedData;
 
 // Object to manage the input buttons and rotary encoder
 static SwitchPnl SwitchPanel(PIN_ENC[0], PIN_ENC[1], PIN_BTN_ENT, PIN_BTN_BCK);
@@ -72,6 +72,7 @@ static bool sendEventAndHandleActions(Event E);
 static Event eventTime();
 static Event eventNextMeal();
 static bool checkFeedTime();
+static void initClock();
 
 
 /*
@@ -80,18 +81,18 @@ static bool checkFeedTime();
 void setup()
 {
   DBGINIT();
+  DBGPRINTLN("START");
 
   // Initialize buttons object
+  DBGPRINTLN("Init switches");
   SwitchPanel.init();
 
   // Initialize RTC and check for errors
-  if (Rtc.init())
-  {
-    Lcd.error("Rtc.init()");
-    abort();
-  }
+  DBGPRINTLN("Init RTC");
+  initClock();
 
   // Send event to initialize display
+  DBGPRINTLN("Init main page");
   sendEventAndHandleActions(Event(Event::EvInit));
 }
 
@@ -113,6 +114,7 @@ void loop()
   // Check update time (counter overflow works well)
   if (CurTime - LastUpdateTime >= TIME_UPDATE_INTERVAL)
   {
+    DBGPRINTLN("Updating display time");
     LastUpdateTime = CurTime;
     sendEventAndHandleActions(eventTime());
   }
@@ -120,6 +122,7 @@ void loop()
   // Check feed time every FEED_CHECK_INTERVAL ms (counter overflow works well)
   if (CurTime - LastCheckFeed >= FEED_CHECK_INTERVAL)
   {
+    DBGPRINTLN("Checking feed time");
     LastCheckFeed = CurTime;
     if (checkFeedTime())
     {
@@ -131,6 +134,7 @@ void loop()
   // MEAL_UPDATE_DELAY ms after serving a meal, the LCD next meal is updated
   if (UpdateMealTime && CurTime - LastMealTime >= MEAL_UPDATE_DELAY)
   {
+    DBGPRINTLN("Refreshing next meal");
     UpdateMealTime = false;
     sendEventAndHandleActions(eventNextMeal());
   }
@@ -147,7 +151,11 @@ void loop()
       // Did we get a switch event?
       if ((SwE = SwitchPanel.check()) != Event::SwEvNone)
       {
-        // Build event
+Serial.print("Switch: ");
+Serial.println((unsigned) SwE);
+Serial.flush();
+
+       // Build event
         Event E(Event::EvSwitch);
         E.Switch = SwE;
 
@@ -219,44 +227,58 @@ static bool sendEventAndHandleActions(Event E)
       End = true;
       break;
     case Action::AcNeedTime:
+      DBGPRINTLN("AcNeedTime");
       E = eventTime();
       break;
     case Action::AcNeedNextMeal:
+      DBGPRINTLN("AcNeedNextMeal");
       E = eventNextMeal();
       break;
     case Action::AcNeedTimeUtc:
+      DBGPRINTLN("AcNeedTimeUtc");
       E.Id = Event::EvTimeUtc;
       E.Time = Rtc.getUtc();
       break;
     case Action::AcNeedMeal:
+      DBGPRINTLN("AcNeedMeal");
       E.Id = Event::EvMeal;
       E.pMeal = FeedData.getMeal(A.MealId);
       break;
     case Action::AcSetTimeUtc:
+      DBGPRINTLN("AcSetTimeUtc");
       Rtc.setUtc(A.Time);
       End = true;
       break;
     case Action::AcSetMeal:
-      FeedData.reset(Rtc.getOfficial());
+      DBGPRINTLN("AcSetMeal");
+//      FeedData.reset(Rtc.getOfficial());
       End = true;
       break;
     case Action::AcManualFeedStart:
+      DBGPRINTLN("AcManualFeedStart");
       Edsm.startFeeding();
       Feeding = true;
+      End = true;
       break;
     case Action::AcManualFeedContinue:
+      DBGPRINTLN("AcManualFeedContinue");
       Edsm.keepFeeding();
       Feeding = true;
+      End = true;
       break;
     case Action::AcManualFeedEnd:
+      DBGPRINTLN("AcManualFeedEnd");
       Edsm.endFeeding();
       // Feeding = false;
+      End = true;
       break;
     case Action::AcSkipMeal:
+      DBGPRINTLN("AcSkipMeal");
       FeedData.skipNext();
       End = true;
       break;
     case Action::AcUnskipMeal:
+      DBGPRINTLN("AcUnskipMeal");
       FeedData.unskipNext();
       End = true;
       break;
@@ -297,4 +319,33 @@ static bool checkFeedTime()
   }
 
   return MealServed;
+}
+
+
+/*
+ *   Initializes the Real Time Clock and checks for errors.
+ *  Assumes that the LCD has been initialized.
+ */
+static void initClock()
+{
+  // Initialize RTC and check for error
+  if (Rtc.init())
+  {
+    Lcd.error("Rtc.init()");
+    abort();
+  }
+
+  // Check if the clock is ticking
+  if (!Rtc.isrunning())
+  {
+    // If not running, start the clock by setting a random time
+    Rtc.setUtc(DateTime());
+
+    // Check again
+    if (!Rtc.isrunning())
+    {
+      Lcd.error("Rtc.init()");
+      abort();
+    }
+  }
 }

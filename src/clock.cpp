@@ -20,23 +20,33 @@ const TimeSpan Clock::_DST_DIFFERENCE(60*60);
  *   Constructor.
  *  Parameters:
  *  * TzDiff: signed offset from UTC to local standard time (out of DST) in
- *    seconds.
+ *    minutes.
  *  * EnableDst: whether to enable or not DST stuff for methods in this class.
  */
 Clock::Clock(int32_t TzDiff, bool EnableDst):
-  _Timezone(TzDiff),
+  _Timezone(TzDiff * 60UL),
   _DstEnabled(EnableDst)
 {
 }
 
 
 /*
- *   Initializes RTC in the class and check that it runs properly.
+ *   Initializes RTC in the class and check that it works properly.
  *  Returns: true iff an error was found.
  */
 bool Clock::init()
 {
-  return !_Rtc.begin() || !_Rtc.isrunning();
+  return !_Rtc.begin();
+}
+
+
+/*
+ *   Returns whether the clock is ticking or it is stopped.
+ *  Returns: true iff the clock is ticking.
+ */
+bool Clock::isrunning()
+{
+  return _Rtc.isrunning();
 }
 
 

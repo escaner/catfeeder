@@ -23,7 +23,7 @@ public:
 protected:
   // Static constants
   static const uint8_t _NUM_OPTIONS = 4U;
-  static const char *const _LINES[];
+  static const char _LINES[DISPLAY_ROWS][DISPLAY_COLS+1];
 
   // Member data
   Page *_pParent;    // Parent page

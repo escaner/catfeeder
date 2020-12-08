@@ -44,7 +44,7 @@ void enableIsr(void (*pIsrFunction)())
 
   TCCR1A = 0;
   TCCR1B = _TCCR_CTC_OCR1A | _TCCR_1024;  // CTC mode for OCR1A & 1024 divider
-  OCR1A = _OCR;  // 16MHz / 1024 / 4MHz
+  OCR1A = _OCR;  // 16MHz / 1024 / 4Hz
   TIMSK1 |= _BV(OCIE1A);  // Enable match interrupts on Output Compare A
 
   interrupts();

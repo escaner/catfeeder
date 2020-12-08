@@ -8,8 +8,11 @@
 /********************/
 
 // Static tags in the display
-const char PgMeal::_MEAL_TAG[] = "COMIDA#";
-const char PgMeal::_TIME_TAG[] = "CANTIDAD";
+const char PgMeal::_LINES[DISPLAY_ROWS][DISPLAY_COLS+1] =
+{
+  "COMIDA#         ",
+  "  :   CANTIDAD  "
+};
 
 
 /***********/
@@ -65,8 +68,14 @@ PageAction PgMeal::focus()
 
   // Only makes sense at StOk
   if (_State == StOk)
+  {
+    // Not initialized: need to draw page and set values to widgets
+    _Initialized = false;
+
     // Request first meal (#0)
-    PgAc = _makeNeedMeal(0U);
+    _ValMeal = 0U;
+    PgAc = _makeNeedMeal(_ValMeal);
+  }
 
   return PgAc;
 }
@@ -111,6 +120,8 @@ PageAction PgMeal::event(const Event &E)
         // Time: go back to Meal widget
         _focusMealWidget();
 
+Serial.println("--setmeal");
+Serial.flush();
         // Request a set meal
         return _makeSetMeal();
       }
@@ -147,10 +158,12 @@ PageAction PgMeal::event(const Event &E)
   case Event::EvMeal:
     // Check if we requested it from focus() or from a change in the meal widget
     if (_State == StNeedMeal)
+    {
       // Yes, all data received, we can finish initialization
       _State = StOk;
-    // Initialize page and widgets
-    _init(E.pMeal);
+      // Initialize page and widgets
+      _init(E.pMeal);
+    }
     // We don't need any more data -> return no action
     break;
   }
@@ -175,7 +188,9 @@ void PgMeal::_init(Meal *pMeal)
   // Save pointer to the meal
   _pMeal = pMeal;
 
-  // Set time values
+  // _ValMeal value already set
+
+  // Set meal time values
   pMeal->getTime(&Hour, &Minute);
   _ValHour = (uint16_t) Hour;
   _ValMinute = (uint16_t) Minute;
@@ -183,32 +198,28 @@ void PgMeal::_init(Meal *pMeal)
   pMeal->getDotw(DotwEn);
   _rearrangeDotwFromEn(_ValDotw, DotwEn);
 
-  // If the object was never initialized, do it
+  // If the object was not initialized since focus(), draw the page
   if (!_Initialized)
   {
     // Initialize the object
     _Initialized = true;
 
-    // Set value for the meal id
-    _ValMeal = 0U;
-  
-    // Display tags in the LCD
-    _Lcd.setCursor(_MEAL_TAG_COL, _MEAL_ROW);
-    _Lcd.write(_MEAL_TAG);
-    _Lcd.setCursor(_TIME_TAG_COL, _TIME_ROW);
-    _Lcd.write(_TIME_TAG);
-
-    // Initialize widgets
-    _WgMeal.init(_MIN_MEALID, _MAX_MEALID, &_ValMeal);
-    _WgDotw.init(_ValDotw);
-    _WgHour.init(_MIN_HOUR, _MAX_HOUR, &_ValHour);
-    _WgMinute.init(_MIN_MINUTE, _MAX_MINUTE, &_ValMinute);
-    _WgQuantity.init(_MIN_QUANTITY, _MAX_QUANTITY, &_ValQuantity);
-
-    // Set focus on meal id
-    _FocusWidget = WgMeal;
-    _WgMeal.focus();
+    // Draw page
+    _Lcd.setCursor(0, _MEAL_ROW);
+    _Lcd.write(_LINES[_MEAL_ROW]);
+    _Lcd.setCursor(0, _TIME_ROW);
+    _Lcd.write(_LINES[_TIME_ROW]);
   }
+
+  // Initialize and draw widgets
+  _WgMeal.init(_MIN_MEALID, _MAX_MEALID, &_ValMeal);
+  _WgDotw.init(_ValDotw);
+  _WgHour.init(_MIN_HOUR, _MAX_HOUR, &_ValHour);
+  _WgMinute.init(_MIN_MINUTE, _MAX_MINUTE, &_ValMinute);
+  _WgQuantity.init(_MIN_QUANTITY, _MAX_QUANTITY, &_ValQuantity);
+
+  // Set focus on meal id
+  _focusMealWidget();
 }
 
 
@@ -240,6 +251,9 @@ PageAction PgMeal::_makeNeedMeal(uint8_t MealId)
 PageAction PgMeal::_makeSetMeal() const
 {
   bool _DotwEn[DotwText::DAYS_IN_A_WEEK];
+
+Serial.println("PgMeal::_makeSetMeal");
+Serial.flush();
 
   // Update _Meal object with time widget values
   _pMeal->setTime(_ValHour, _ValMinute);
@@ -296,11 +310,21 @@ void PgMeal::_focusNextTimeWidget()
  */
 void PgMeal::_rearrangeDotwToEn(bool *pDst, const bool *pSrc) const
 {
+Serial.println("rearrange->En");
+Serial.println("src:");
+for (int i=0; i<DotwText::DAYS_IN_A_WEEK; i++)
+Serial.print(pSrc[i]);
+Serial.println();
+
   // Copy all the correlative ones
   memcpy(pDst+1, pSrc, (DotwText::DAYS_IN_A_WEEK - 1U) * sizeof (bool));
 
   // Copy the missing one
   pDst[0] = pSrc[DotwText::DAYS_IN_A_WEEK - 1U];
+Serial.println("Dst:");
+for (int i=0; i<DotwText::DAYS_IN_A_WEEK; i++)
+Serial.print(pDst[i]);
+Serial.println();
 }
 
 
@@ -312,9 +336,18 @@ void PgMeal::_rearrangeDotwToEn(bool *pDst, const bool *pSrc) const
  */
 void PgMeal::_rearrangeDotwFromEn(bool *pDst, const bool *pSrc) const
 {
+Serial.println("rearrange<-En");
+Serial.println("src:");
+for (int i=0; i<DotwText::DAYS_IN_A_WEEK; i++)
+Serial.print(pSrc[i]);
+Serial.println();
   // Copy all the correlative ones
   memcpy(pDst, pSrc+1, (DotwText::DAYS_IN_A_WEEK - 1U) * sizeof (bool));
 
   // Copy the missing one
   pDst[DotwText::DAYS_IN_A_WEEK - 1U] = pSrc[0];
+Serial.println("Dst:");
+for (int i=0; i<DotwText::DAYS_IN_A_WEEK; i++)
+Serial.print(pDst[i]);
+Serial.println();
 }

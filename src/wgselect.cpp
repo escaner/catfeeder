@@ -63,14 +63,14 @@ int8_t WgSelect::event(const Event &E)
     case Event::SwEvSelectCw:
       // Select previous option
       _clearCursor();
-      _prevOption();
+      _nextOption();
       _drawCursor();
       // Ac = AcNone;
       break;
     case Event::SwEvSelectCcw:
       // Select next option
       _clearCursor();
-      _nextOption();
+      _prevOption();
       _drawCursor();
       // Ac = AcNone;
       break;

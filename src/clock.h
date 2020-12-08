@@ -17,6 +17,7 @@ public:
   // Public methods
   Clock(int32_t TzDiff, bool EnableDst);
   bool init();
+  bool isrunning();
   void setUtc(const DateTime &UtcTime) const;
   DateTime getUtc() const;
   DateTime getOfficial() const;

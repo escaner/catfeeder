@@ -23,7 +23,10 @@ Display::Display(uint8_t PinRs, uint8_t PinEnable, uint8_t PinD4, uint8_t PinD5,
 Action Display::event(const Event &E)
 {
   PageAction PgA;
-  Action A;
+
+Serial.print("EVENT:");
+Serial.println((unsigned) E.Id);
+Serial.flush();
 
   // Pass event to focus page
   PgA = _pFocusPage->event(E);
@@ -31,6 +34,8 @@ Action Display::event(const Event &E)
   // Is there a focus change?
   if (PgA.pFocusPage != nullptr)
   {
+Serial.println("PGACTION:focus chg");
+Serial.flush();
     assert(PgA.pFocusPage != _pFocusPage);  // Focus really changes
 
     // Update focus page and draw it
@@ -41,6 +46,10 @@ Action Display::event(const Event &E)
     if (PgA.MainAction.Id == Action::AcNone)
       PgA = PgAFocus;
   }
+
+Serial.print("ACTION:");
+Serial.println((unsigned) PgA.MainAction.Id);
+Serial.flush();
 
   // Return the standard Action
   return PgA.MainAction;

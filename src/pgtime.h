@@ -52,7 +52,6 @@ protected:
 
   // Positions of widgets and tags
   static const uint8_t _TIME_ROW = 0U;
-  static const uint8_t _TIME_TAG_COL = 0U;
   static const uint8_t _TIME_HOUR_COL = 8U;
   static const uint8_t _TIME_HOUR_SIZE = 2U;
   static const uint8_t _TIME_MINUTE_COL = 11U;
@@ -60,8 +59,6 @@ protected:
   static const uint8_t _TIME_SECOND_COL = 14U;
   static const uint8_t _TIME_SECOND_SIZE = 2U;
   static const uint8_t _DATE_ROW = 1U;
-  static const uint8_t _DATE_TAG_COL = 0U;
-  static const uint8_t _DATE_TAG_SIZE = 2U;
   static const uint8_t _DATE_DAY_COL = 6U;
   static const uint8_t _DATE_DAY_SIZE = 2U;
   static const uint8_t _DATE_MONTH_COL = 9U;
@@ -71,8 +68,7 @@ protected:
   static const uint8_t _NUM_DAYS_PER_MONTH[];
 
   // Static tags in the display
-  static const char _TIME_TAG[];
-  static const char _DATE_TAG[];
+  static const char _LINES[DISPLAY_ROWS][DISPLAY_COLS+1];
 
   // Protected methods
   void _init(const DateTime &Time);

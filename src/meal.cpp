@@ -78,6 +78,8 @@ void Meal::setDotw(const bool pDotwArray[])
 
   // Set
   _Meal.Dotw = Dotw;
+Serial.print("setDotw:");
+Serial.println(Dotw, 1);
 }
 
 

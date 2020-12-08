@@ -11,16 +11,18 @@
 // Text to display in the page
 const char *const PgMain::_LINES[] =
 {
-  "%02hhu:%02hhu %c %02hhu/%02hhu/%02hhu",
-  "SGTE %c%02hhu:%02hhu %s"
+//  "%02hhu:%02hhu %c %02hhu/%02hhu/%02hhu",
+  "%02u:%02u %c %02u/%02u/%02u",
+//  "SGTE %c%02hhu:%02hhu %s"
+  "SGTE %c%02u:%02u %s"
 };
 
 // Skip condition text. 0 -> normal, 1 -> served, 2 -> skip
 const char PgMain::_STATUS_TEXT[][_NEXTMEAL_STATUS_SIZE+1U] =
 {
-  "     ",
-  "SRVDA",
-  "SALTA"
+  "    ",
+  "SRVD",
+  "SALT"
 };
 
 
@@ -80,6 +82,8 @@ PageAction PgMain::event(const Event &E)
   switch (E.Id)
   {
   case Event::EvInit:
+Serial.println("PgMain:event(EvInit)");
+Serial.flush();
     // Initialize: display page for the first time
     return focus();
 
@@ -166,8 +170,15 @@ void PgMain::_drawTime(const DateTime &Time) const
   Year = Time.year() % 100U;
 
   // Generate line to write
-  sprintf(Line, _LINES[0],
-    Time.hour(), Time.minute(), Dotw, Time.day(), Time.month(), Year);
+  sprintf(Line, _LINES[0], (unsigned) Time.hour(), (unsigned) Time.minute(),
+    Dotw, (unsigned) Time.day(), (unsigned) Time.month(), (unsigned) Year);
+Serial.print("PgMain:Time:");
+Serial.print("Dotw/c:");
+Serial.print((unsigned)Time.dayOfTheWeek());
+Serial.print('/');
+Serial.println(Dotw);
+Serial.println(Line);
+Serial.flush();
   assert(strlen(Line) == DISPLAY_COLS);
 
   // Write line in LCD
@@ -176,9 +187,9 @@ void PgMain::_drawTime(const DateTime &Time) const
 
 
 /*
- *   Draws Time in the LCD.
+ *   Draws information about the next meal in the LCD.
  *  Parameters:
- *  * Time: time to be displayed.
+ *  * NextMeal: time, day of the week and status about the next meal.
  */
 void PgMain::_drawNextMeal(const Event::NextMeal_t &NextMeal) const
 {
@@ -189,11 +200,33 @@ void PgMain::_drawNextMeal(const Event::NextMeal_t &NextMeal) const
   // Move LCD cursor to next meal position
   _Lcd.setCursor(_NEXTMEAL_COL, _NEXTMEAL_ROW);
 
-  // Get single char representation of the day of the week
-  Dotw = DotwText::DotwCharEs[NextMeal.Dotw];
-  assert(NextMeal.Status >= 0);
-  pStatus = _STATUS_TEXT[NextMeal.Status];
-  sprintf(Line, _LINES[1], NextMeal.Hour, NextMeal.Minute, Dotw, pStatus);
+  // Is there a next meal?
+  if (NextMeal.Status >= 0)
+  {
+    // Yes
+    // Get single char representation of the day of the week
+    Dotw = DotwText::DotwCharEs[NextMeal.Dotw];
+    pStatus = _STATUS_TEXT[NextMeal.Status];
+    sprintf(Line, _LINES[1], Dotw, (unsigned) NextMeal.Hour,
+      (unsigned) NextMeal.Minute, pStatus);
+Serial.print("PgMain:NxtMeal(st):");
+Serial.println((int)NextMeal.Status);
+Serial.print("Dotw/c:");
+Serial.print((unsigned)NextMeal.Dotw);
+Serial.println(Dotw);
+Serial.println(Line);
+Serial.flush();
+  }
+  else
+  {
+    // No next meal: fill with blanks
+    memset(Line, ' ', DISPLAY_COLS);
+    // Add end of string
+    Line[DISPLAY_COLS] = '\0';
+  }
+Serial.print("strlen:");
+Serial.println(strlen(Line));
+Serial.flush();
   assert(strlen(Line) == DISPLAY_COLS);
 
   // Write line in LCD
