@@ -68,7 +68,9 @@ protected:
   static const uint8_t _NUM_DAYS_PER_MONTH[];
 
   // Static tags in the display
-  static const char _LINES[DISPLAY_ROWS][DISPLAY_COLS+1];
+  static const char *const _LINES[DISPLAY_ROWS] PROGMEM;
+  static const char _LINE0[DISPLAY_COLS+1] PROGMEM;
+  static const char _LINE1[DISPLAY_COLS+1] PROGMEM;
 
   // Protected methods
   void _init(const DateTime &Time);

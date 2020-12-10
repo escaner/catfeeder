@@ -24,7 +24,7 @@ Action Display::event(const Event &E)
 {
   PageAction PgA;
 
-Serial.print("EVENT:");
+Serial.print(F("EVENT:"));
 Serial.println((unsigned) E.Id);
 Serial.flush();
 
@@ -34,7 +34,7 @@ Serial.flush();
   // Is there a focus change?
   if (PgA.pFocusPage != nullptr)
   {
-Serial.println("PGACTION:focus chg");
+Serial.println(F("PGACTION:focus chg"));
 Serial.flush();
     assert(PgA.pFocusPage != _pFocusPage);  // Focus really changes
 
@@ -47,7 +47,7 @@ Serial.flush();
       PgA = PgAFocus;
   }
 
-Serial.print("ACTION:");
+Serial.print(F("ACTION:"));
 Serial.println((unsigned) PgA.MainAction.Id);
 Serial.flush();
 

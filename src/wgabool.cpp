@@ -133,6 +133,8 @@ int8_t WgAbool::event(const Event &E)
       // Signal to exit; disble blinking
       _blinkOff();
       Ac = AcBack;
+Serial.println(F("WgAbool->back"));
+Serial.flush();
       break;
     }
 

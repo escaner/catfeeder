@@ -64,7 +64,9 @@ protected:
   static const uint8_t _TIME_QUANTITY_SIZE = 1U;
 
   // Static tags in the display
-  static const char _LINES[DISPLAY_ROWS][DISPLAY_COLS+1];
+  static const char *const _LINES[DISPLAY_ROWS] PROGMEM;
+  static const char _LINE0[DISPLAY_COLS+1] PROGMEM;
+  static const char _LINE1[DISPLAY_COLS+1] PROGMEM;
 
   // Arrays with single letter representations of indexes
   char _DOTW_CHAR_FALSE[DotwText::DAYS_IN_A_WEEK];

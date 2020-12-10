@@ -11,11 +11,9 @@ const uint8_t PgTime::_NUM_DAYS_PER_MONTH[] =
   { 31U, 28U, 31U, 30U, 31U, 30U, 31U, 31U, 30U, 31U, 30U, 31U };
 
 // Static tags in the display
-const char PgTime::_LINES[DISPLAY_ROWS][DISPLAY_COLS+1] =
-{
-  "TIEMPO    :  :  ",
-  "UTC     /  /    "
-};
+const char *const PgTime::_LINES[DISPLAY_ROWS] PROGMEM = { _LINE0, _LINE1 };
+const char PgTime::_LINE0[DISPLAY_COLS+1] PROGMEM = "TIEMPO    :  :  ";
+const char PgTime::_LINE1[DISPLAY_COLS+1] PROGMEM = "UTC     /  /    ";
 
 
 /***********/
@@ -148,9 +146,9 @@ void PgTime::_init(const DateTime &Time)
 
    // Draw page
   _Lcd.setCursor(0, _TIME_ROW);
-  _Lcd.write(_LINES[_TIME_ROW]);
+  _Lcd.print((const __FlashStringHelper *) pgm_read_ptr(_LINES + _TIME_ROW));
   _Lcd.setCursor(0, _DATE_ROW);
-  _Lcd.write(_LINES[_DATE_ROW]);
+  _Lcd.print((const __FlashStringHelper *) pgm_read_ptr(_LINES + _DATE_ROW));
 
   // Initialize & draw widgets
   _Widgets[WgHour].init(_MIN_HOUR, _MAX_HOUR, _Values+WgHour);

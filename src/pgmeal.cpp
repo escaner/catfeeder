@@ -8,11 +8,9 @@
 /********************/
 
 // Static tags in the display
-const char PgMeal::_LINES[DISPLAY_ROWS][DISPLAY_COLS+1] =
-{
-  "COMIDA#         ",
-  "  :   CANTIDAD  "
-};
+const char PgMeal::_LINE0[DISPLAY_COLS+1] PROGMEM = "COMIDA#         ";
+const char PgMeal::_LINE1[DISPLAY_COLS+1] PROGMEM = "  :   CANTIDAD  ";
+const char *const PgMeal::_LINES[DISPLAY_ROWS] PROGMEM = { _LINE0, _LINE1 };
 
 
 /***********/
@@ -120,8 +118,6 @@ PageAction PgMeal::event(const Event &E)
         // Time: go back to Meal widget
         _focusMealWidget();
 
-Serial.println("--setmeal");
-Serial.flush();
         // Request a set meal
         return _makeSetMeal();
       }
@@ -206,9 +202,9 @@ void PgMeal::_init(Meal *pMeal)
 
     // Draw page
     _Lcd.setCursor(0, _MEAL_ROW);
-    _Lcd.write(_LINES[_MEAL_ROW]);
+    _Lcd.print((const __FlashStringHelper *) pgm_read_ptr(_LINES + _MEAL_ROW));
     _Lcd.setCursor(0, _TIME_ROW);
-    _Lcd.write(_LINES[_TIME_ROW]);
+    _Lcd.print((const __FlashStringHelper *) pgm_read_ptr(_LINES + _TIME_ROW));
   }
 
   // Initialize and draw widgets
@@ -252,7 +248,7 @@ PageAction PgMeal::_makeSetMeal() const
 {
   bool _DotwEn[DotwText::DAYS_IN_A_WEEK];
 
-Serial.println("PgMeal::_makeSetMeal");
+Serial.println(F("PgMeal::_makeSetMeal"));
 Serial.flush();
 
   // Update _Meal object with time widget values
@@ -310,8 +306,8 @@ void PgMeal::_focusNextTimeWidget()
  */
 void PgMeal::_rearrangeDotwToEn(bool *pDst, const bool *pSrc) const
 {
-Serial.println("rearrange->En");
-Serial.println("src:");
+Serial.println(F("rearrange->En"));
+Serial.print(F("src:"));
 for (int i=0; i<DotwText::DAYS_IN_A_WEEK; i++)
 Serial.print(pSrc[i]);
 Serial.println();
@@ -321,7 +317,7 @@ Serial.println();
 
   // Copy the missing one
   pDst[0] = pSrc[DotwText::DAYS_IN_A_WEEK - 1U];
-Serial.println("Dst:");
+Serial.print(F("Dst:"));
 for (int i=0; i<DotwText::DAYS_IN_A_WEEK; i++)
 Serial.print(pDst[i]);
 Serial.println();
@@ -336,8 +332,8 @@ Serial.println();
  */
 void PgMeal::_rearrangeDotwFromEn(bool *pDst, const bool *pSrc) const
 {
-Serial.println("rearrange<-En");
-Serial.println("src:");
+Serial.println(F("rearrange<-En"));
+Serial.println(F("src:"));
 for (int i=0; i<DotwText::DAYS_IN_A_WEEK; i++)
 Serial.print(pSrc[i]);
 Serial.println();
@@ -346,7 +342,7 @@ Serial.println();
 
   // Copy the missing one
   pDst[DotwText::DAYS_IN_A_WEEK - 1U] = pSrc[0];
-Serial.println("Dst:");
+Serial.println(F("Dst:"));
 for (int i=0; i<DotwText::DAYS_IN_A_WEEK; i++)
 Serial.print(pDst[i]);
 Serial.println();

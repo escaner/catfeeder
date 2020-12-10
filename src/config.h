@@ -40,7 +40,7 @@ static const uint16_t SWITCH_LOOP_COUNT = 2000U;
 // Time sice a meal is served to update the LCD next meal information in ms
 static const uint16_t MEAL_UPDATE_DELAY = 5U * 60U * 1000U;
 
-/* Display */
+// Display size
 static const uint8_t DISPLAY_ROWS = 2U;
 static const uint8_t DISPLAY_COLS = 16U;
 

@@ -30,7 +30,9 @@ protected:
   static const uint8_t _NEXTMEAL_COL = 0U;
   static const uint8_t _NEXTMEAL_ROW = 1U;
   static const uint8_t _NEXTMEAL_STATUS_SIZE = 5U;
-  static const char *const _LINES[];
+  static const char *const _LINES[DISPLAY_ROWS] PROGMEM;
+  static const char _LINE0[] PROGMEM;
+  static const char _LINE1[] PROGMEM;
   static const char _STATUS_TEXT[][_NEXTMEAL_STATUS_SIZE+1U];
 
   // Protected methods

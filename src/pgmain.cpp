@@ -9,13 +9,9 @@
 /********************/
 
 // Text to display in the page
-const char *const PgMain::_LINES[] =
-{
-//  "%02hhu:%02hhu %c %02hhu/%02hhu/%02hhu",
-  "%02u:%02u %c %02u/%02u/%02u",
-//  "SGTE %c%02hhu:%02hhu %s"
-  "SGTE %c%02u:%02u %s"
-};
+const char PgMain::_LINE0[] PROGMEM = "%02u:%02u %c %02u/%02u/%02u";
+const char PgMain::_LINE1[] PROGMEM = "SGTE %c%02u:%02u %s";
+const char *const PgMain::_LINES[DISPLAY_ROWS] PROGMEM = { _LINE0, _LINE1 };
 
 // Skip condition text. 0 -> normal, 1 -> served, 2 -> skip
 const char PgMain::_STATUS_TEXT[][_NEXTMEAL_STATUS_SIZE+1U] =
@@ -82,8 +78,6 @@ PageAction PgMain::event(const Event &E)
   switch (E.Id)
   {
   case Event::EvInit:
-Serial.println("PgMain:event(EvInit)");
-Serial.flush();
     // Initialize: display page for the first time
     return focus();
 
@@ -118,25 +112,27 @@ Serial.flush();
     break;
 
   case Event::EvTime:
+    // Draw or update the time
+    _drawTime(E.Time);
+
     // Check if we requested it from focus()
     if (_State == StNeedTime)
     {
       // Yes, advance state
       _State = StNeedNextMeal;
-      // Draw it
-      _drawTime(E.Time);
       // Now request next meal data
       return PageAction(Action::AcNeedNextMeal);
     }
-    // Otherwise, just draw it and return no action
-    _drawTime(E.Time);
+    // Otherwise, just return no action
     break;
 
   case Event::EvNextMeal:
     // Check if we requested it, unchained from focus()
     if (_State == StNeedNextMeal)
+    {
       // Yes, all data received, we can finish initialization
       _State = StOk;
+    }
     // Either requested or because update, draw it
     _drawNextMeal(E.NextMeal);
     // We don't need more data: no action
@@ -170,14 +166,13 @@ void PgMain::_drawTime(const DateTime &Time) const
   Year = Time.year() % 100U;
 
   // Generate line to write
-  sprintf(Line, _LINES[0], (unsigned) Time.hour(), (unsigned) Time.minute(),
-    Dotw, (unsigned) Time.day(), (unsigned) Time.month(), (unsigned) Year);
-Serial.print("PgMain:Time:");
-Serial.print("Dotw/c:");
-Serial.print((unsigned)Time.dayOfTheWeek());
-Serial.print('/');
-Serial.println(Dotw);
+  sprintf_P(Line, pgm_read_ptr(_LINES + 0), (unsigned) Time.hour(),
+    (unsigned) Time.minute(), Dotw, (unsigned) Time.day(),
+    (unsigned) Time.month(), (unsigned) Year);
+Serial.print(F("PgMain:Time:"));
 Serial.println(Line);
+Serial.print(F("strlen:"));
+Serial.println(strlen(Line));
 Serial.flush();
   assert(strlen(Line) == DISPLAY_COLS);
 
@@ -207,24 +202,20 @@ void PgMain::_drawNextMeal(const Event::NextMeal_t &NextMeal) const
     // Get single char representation of the day of the week
     Dotw = DotwText::DotwCharEs[NextMeal.Dotw];
     pStatus = _STATUS_TEXT[NextMeal.Status];
-    sprintf(Line, _LINES[1], Dotw, (unsigned) NextMeal.Hour,
+    sprintf_P(Line, pgm_read_ptr(_LINES + 1), Dotw, (unsigned) NextMeal.Hour,
       (unsigned) NextMeal.Minute, pStatus);
-Serial.print("PgMain:NxtMeal(st):");
-Serial.println((int)NextMeal.Status);
-Serial.print("Dotw/c:");
-Serial.print((unsigned)NextMeal.Dotw);
-Serial.println(Dotw);
+Serial.print(F("PgMain:NxtMeal:"));
 Serial.println(Line);
 Serial.flush();
   }
   else
   {
     // No next meal: fill with blanks
-    memset(Line, ' ', DISPLAY_COLS);
+    memset(Line, ' ', DISPLAY_COLS * sizeof (char));
     // Add end of string
     Line[DISPLAY_COLS] = '\0';
   }
-Serial.print("strlen:");
+Serial.print(F("strlen:"));
 Serial.println(strlen(Line));
 Serial.flush();
   assert(strlen(Line) == DISPLAY_COLS);

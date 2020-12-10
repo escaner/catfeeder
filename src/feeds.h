@@ -35,7 +35,7 @@ public:
   bool isSkippingNext() const;
   Next_t timeOfNext(uint8_t *pDotw, uint8_t *pHour, uint8_t *pMinute) const;
   Meal *getMeal(uint8_t Id);
-  void setMeal(const DateTime &Now, uint8_t Id, const Meal &NewMeal);
+  // void setMeal(const DateTime &Now, uint8_t Id, const Meal &NewMeal);
 
 protected:
   static const uint8_t _ID_NULL = UINT8_MAX;
@@ -44,7 +44,6 @@ protected:
   static const int _BASE_ADDR = 1;
 
   Meal _Meals[NUM_MEALS];
-//  DateTime _LastCheck;
   uint8_t _NextMealId;    // Id if the next programmed meal
   uint8_t _NextMealDotw;  // Day of the week for the If Meal
   bool _NextMealDealt;    // Whether _NextMealId has already been fed/skipped

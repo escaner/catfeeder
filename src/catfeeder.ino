@@ -19,9 +19,9 @@ static const uint8_t NUM_BUTTONS = 2U;  // Number of swtiches of type button
 
 // ARDUINO NANO connections
 // Switches
-static const uint8_t PIN_ENC[ENC_NUM_PINS] = { 9, 10 };
-static const uint8_t PIN_BTN_ENT = 0; /* RX0 */
-static const uint8_t PIN_BTN_BCK = 1; /* TX1 */
+static const uint8_t PIN_ENC[ENC_NUM_PINS] = { 2, 3 };
+static const uint8_t PIN_BTN_ENT = 9;
+static const uint8_t PIN_BTN_BCK = 10;
 // Display
 static const uint8_t PIN_LCD_RS = 12;
 static const uint8_t PIN_LCD_E = 11;
@@ -91,6 +91,10 @@ void setup()
   DBGPRINTLN("Init RTC");
   initClock();
 
+  // Initialize feed data structure
+  DBGPRINTLN("Init data");
+  FeedData.init(Rtc.getOfficial());
+
   // Send event to initialize display
   DBGPRINTLN("Init main page");
   sendEventAndHandleActions(Event(Event::EvInit));
@@ -134,7 +138,7 @@ void loop()
   // MEAL_UPDATE_DELAY ms after serving a meal, the LCD next meal is updated
   if (UpdateMealTime && CurTime - LastMealTime >= MEAL_UPDATE_DELAY)
   {
-    DBGPRINTLN("Refreshing next meal");
+    DBGPRINTLN("Refresh nxt meal");
     UpdateMealTime = false;
     sendEventAndHandleActions(eventNextMeal());
   }
@@ -151,7 +155,7 @@ void loop()
       // Did we get a switch event?
       if ((SwE = SwitchPanel.check()) != Event::SwEvNone)
       {
-Serial.print("Switch: ");
+Serial.print(F("SWITCH:"));
 Serial.println((unsigned) SwE);
 Serial.flush();
 
@@ -247,11 +251,12 @@ static bool sendEventAndHandleActions(Event E)
     case Action::AcSetTimeUtc:
       DBGPRINTLN("AcSetTimeUtc");
       Rtc.setUtc(A.Time);
+      FeedData.reset(Rtc.getOfficial());  // Reset skip & calculate next meal
       End = true;
       break;
     case Action::AcSetMeal:
       DBGPRINTLN("AcSetMeal");
-//      FeedData.reset(Rtc.getOfficial());
+      FeedData.reset(Rtc.getOfficial());
       End = true;
       break;
     case Action::AcManualFeedStart:

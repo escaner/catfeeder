@@ -78,7 +78,7 @@ void Meal::setDotw(const bool pDotwArray[])
 
   // Set
   _Meal.Dotw = Dotw;
-Serial.print("setDotw:");
+Serial.print(F("setDotw:"));
 Serial.println(Dotw, 1);
 }
 
@@ -153,8 +153,8 @@ bool Meal::isEnabled() const
 
 
 /*
- *   Compares two this meal with another one and returns which is the next
- *  one in reference to a given time.
+ *   Compares this meal with another one and returns which one is the next
+ *  in reference to a given time.
  *   Note: assumes that both meals are enabled!
  *  Parameters:
  *  * OtherMeal: this Meal will be compared with Other Meal
@@ -249,7 +249,7 @@ bool Meal::loadEeprom()
   if (_EepromAddress < 0)
     return true;
 
-  // Read meal data frin Arduino EEPROM
+  // Read meal data from Arduino EEPROM
   EEPROM.get(_EepromAddress, _Meal);
 
   return false;

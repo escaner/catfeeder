@@ -34,20 +34,23 @@ void Feeds::init(const DateTime &Now)
   // Read magic record and check for validity
   if (EEPROM.read(_MAGIC_ADDR) != _MAGIC_NUMBER)
   {
+Serial.println(F("Eeprom magic KO: Save"));
     // Magic record has incorrect value -> initialize EEPROM data
     // First write meals data
     for (Id=0; Id<NUM_MEALS; Id++)
       _Meals[Id].saveEeprom();
 
     // Then write valid magic number
-    EEPROM.write(_MAGIC_ADDR, _MAGIC_NUMBER);
+//    EEPROM.write(_MAGIC_ADDR, _MAGIC_NUMBER);
   }
   else
   {
+Serial.println(F("Eeprom magic OK: Read"));
     // Magic number is correct, read saved meals from EEPROM
     for (Id=0; Id<NUM_MEALS; Id++)
       _Meals[Id].loadEeprom();
   }
+Serial.flush();
 
   // Set next (first) meal
   _updateNext(Now);
@@ -222,6 +225,7 @@ Meal *Feeds::getMeal(uint8_t Id)
  *  object, skipping to the new time without dispensing any meal and
  *  the skip next meal flag is disabled.
  */
+/*
 void Feeds::setMeal(const DateTime &Now, uint8_t Id, const Meal &NewMeal)
 {
   // Update the meal
@@ -230,6 +234,7 @@ void Feeds::setMeal(const DateTime &Now, uint8_t Id, const Meal &NewMeal)
   // Reset object skipping to the Now time
   reset(Now);
 }
+*/
 
 
 /*
@@ -244,10 +249,14 @@ void Feeds::_updateNext(const DateTime &Now)
   TimeSpan NextMealSpan;
   uint8_t Id;
 
+Serial.println(F("Feeds:updateNext"));
   // When we have no next meal selected, find first active meal
   for (Id=0; _NextMealId==_ID_NULL && Id<NUM_MEALS; Id++)
     if (_Meals[Id].isEnabled())
       _NextMealId = Id;
+Serial.print(F("First:"));
+Serial.println(_NextMealId);
+Serial.flush();
 
   // Continue loop through the rest of the meals and find the closest next one
   for (; Id<NUM_MEALS; Id++)
@@ -257,6 +266,9 @@ void Feeds::_updateNext(const DateTime &Now)
       if (_Meals[_NextMealId].compare(_Meals[Id], Now, &NextMealSpan))
         // We have a new earliest Meal -> update
         _NextMealId = Id;
+Serial.print(F("Next:"));
+Serial.println(_NextMealId);
+Serial.flush();
 
   // If we found a winner, calculate its DOTW
   if (_NextMealId != _ID_NULL)

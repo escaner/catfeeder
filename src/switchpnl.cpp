@@ -52,7 +52,7 @@ Event::SwitchEvent SwitchPnl::check()
   StepSelect = _Select.update(Val0, Val1);
 if (StepSelect!=0)
 {
-Serial.print("ENCODER:");
+Serial.print(F("ENCODER:"));
 Serial.println((int)StepSelect);
 Serial.flush();
 }

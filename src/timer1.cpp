@@ -7,7 +7,8 @@
 /* Module constants */
 /********************/
 
-static const uint16_t _OCR = 3906U;  // Output compare register value
+//static const uint16_t _OCR = 3906U;  // Output compare register value: 4Hz
+static const uint16_t _OCR = 5208U;  // Output compare register value: 3Hz
 static const byte _TCCR_CTC_OCR1A = _BV(WGM12);  // CTC OCR1A mode for TCCR
 static const byte _TCCR_1024 = _BV(CS12) | _BV(CS10);  // 1024 divider
 
@@ -30,7 +31,7 @@ ISR(TIMER1_COMPA_vect)
 
 
 /*
- *   Enables interrupts and configures the class to call the provided ISR
+ *   Enables interrupts and configures the module to call the provided ISR
  *  function.
  *  Paramters:
  *  * pIsrFunction: pointer to functionISR  to call on interrupt
@@ -44,7 +45,7 @@ void enableIsr(void (*pIsrFunction)())
 
   TCCR1A = 0;
   TCCR1B = _TCCR_CTC_OCR1A | _TCCR_1024;  // CTC mode for OCR1A & 1024 divider
-  OCR1A = _OCR;  // 16MHz / 1024 / 4Hz
+  OCR1A = _OCR;  // 16MHz / 1024 / 3Hz
   TIMSK1 |= _BV(OCIE1A);  // Enable match interrupts on Output Compare A
 
   interrupts();

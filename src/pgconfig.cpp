@@ -7,11 +7,9 @@
 /********************/
 
 // Text to display in the page
-const char PgConfig::_LINES[DISPLAY_ROWS][DISPLAY_COLS+1] =
-{
-  " SALTAR  NO SALT",
-  " HORA    COMIDAS"
-};
+const char *const PgConfig::_LINES[DISPLAY_ROWS] PROGMEM = { _LINE0, _LINE1 };
+const char PgConfig::_LINE0[DISPLAY_COLS+1] PROGMEM = " SALTAR  NO SALT";
+const char PgConfig::_LINE1[DISPLAY_COLS+1] PROGMEM = " HORA    COMIDAS";
 
 
 /***********/
@@ -43,9 +41,9 @@ PageAction PgConfig::PgConfig::focus()
 {
   // Draw page
   _Lcd.setCursor(0, 0);
-  _Lcd.write(_LINES[0]);
+  _Lcd.print((const __FlashStringHelper *) pgm_read_ptr(_LINES + 0));
   _Lcd.setCursor(0, 1);
-  _Lcd.write(_LINES[1]);
+  _Lcd.print((const __FlashStringHelper *) pgm_read_ptr(_LINES + 1));
 
   // Draw select widget
   _Select.focus();
