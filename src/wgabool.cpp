@@ -75,7 +75,7 @@ void WgAbool::init(bool *pValues)
 
 
 /*
- *   Start blinking first position in the array.
+ *   Focus to this widget: start blinking first position in the array.
  */
 void WgAbool::focus()
 {
@@ -133,8 +133,6 @@ int8_t WgAbool::event(const Event &E)
       // Signal to exit; disble blinking
       _blinkOff();
       Ac = AcBack;
-Serial.println(F("WgAbool->back"));
-Serial.flush();
       break;
     }
 

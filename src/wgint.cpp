@@ -85,11 +85,20 @@ void WgInt::init(uint16_t MinValue, uint16_t MaxValue, uint16_t *pValue)
 
 
 /*
- *   Star blinking the value in the LCD.
+ *   Focus the widget: start blinking the value in the LCD.
  */
 void WgInt::focus()
 {
   _blinkOn();
+}
+
+
+/*
+ *   Unfocus the widget: stop blinking the value in the LCD.
+ */
+void WgInt::unfocus()
+{
+  _blinkOff();
 }
 
 
@@ -234,6 +243,9 @@ void WgInt::_increment()
 {
   if (*_pValue != _MaxValue)
     (*_pValue)++;
+  else
+    // After maximum value, cycle back to minimum
+    *_pValue = _MinValue;
 }
 
 
@@ -244,4 +256,7 @@ void WgInt::_decrement()
 {
   if (*_pValue != _MinValue)
     (*_pValue)--;
+  else
+    // After minimum value, cycle back to maximum
+    *_pValue = _MaxValue;
 }

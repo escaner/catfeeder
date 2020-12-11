@@ -50,12 +50,6 @@ Event::SwitchEvent SwitchPnl::check()
   Val0 = digitalRead(_PinSelectA);
   Val1 = digitalRead(_PinSelectB);
   StepSelect = _Select.update(Val0, Val1);
-if (StepSelect!=0)
-{
-Serial.print(F("ENCODER:"));
-Serial.println((int)StepSelect);
-Serial.flush();
-}
   if (StepSelect < 0)
     return Event::SwEvSelectCcw;
   else if (StepSelect > 0)

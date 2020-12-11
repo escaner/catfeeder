@@ -142,6 +142,9 @@ PageAction PgMeal::event(const Event &E)
         assert(_FocusWidget == WgMeal);
         assert(_State == StOk);
 
+        // Remove focus from widget to stop it blinking and be able
+        // to draw the new values without being interrupted
+        _WgMeal.unfocus();
         // Request selected meal id
         return _makeNeedMeal(_ValMeal);
       }
@@ -302,21 +305,11 @@ void PgMeal::_focusNextTimeWidget()
  */
 void PgMeal::_rearrangeDotwToEn(bool *pDst, const bool *pSrc) const
 {
-Serial.println(F("rearrange->En"));
-Serial.print(F("src:"));
-for (int i=0; i<DotwText::DAYS_IN_A_WEEK; i++)
-Serial.print(pSrc[i]);
-Serial.println();
-
   // Copy all the correlative ones
   memcpy(pDst+1, pSrc, (DotwText::DAYS_IN_A_WEEK - 1U) * sizeof (bool));
 
   // Copy the missing one
   pDst[0] = pSrc[DotwText::DAYS_IN_A_WEEK - 1U];
-Serial.print(F("Dst:"));
-for (int i=0; i<DotwText::DAYS_IN_A_WEEK; i++)
-Serial.print(pDst[i]);
-Serial.println();
 }
 
 
@@ -328,18 +321,9 @@ Serial.println();
  */
 void PgMeal::_rearrangeDotwFromEn(bool *pDst, const bool *pSrc) const
 {
-Serial.println(F("rearrange<-En"));
-Serial.println(F("src:"));
-for (int i=0; i<DotwText::DAYS_IN_A_WEEK; i++)
-Serial.print(pSrc[i]);
-Serial.println();
   // Copy all the correlative ones
   memcpy(pDst, pSrc+1, (DotwText::DAYS_IN_A_WEEK - 1U) * sizeof (bool));
 
   // Copy the missing one
   pDst[DotwText::DAYS_IN_A_WEEK - 1U] = pSrc[0];
-Serial.println(F("Dst:"));
-for (int i=0; i<DotwText::DAYS_IN_A_WEEK; i++)
-Serial.print(pDst[i]);
-Serial.println();
 }

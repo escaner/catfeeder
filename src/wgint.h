@@ -22,6 +22,7 @@ public:
   void init(uint16_t MinValue, uint16_t MaxValue, uint16_t *pValue);
 
   virtual void focus();
+  virtual void unfocus();
   virtual int8_t event(const Event &E);
 
 protected:
