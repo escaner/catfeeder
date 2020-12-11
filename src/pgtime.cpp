@@ -11,7 +11,7 @@ const uint8_t PgTime::_NUM_DAYS_PER_MONTH[] =
   { 31U, 28U, 31U, 30U, 31U, 30U, 31U, 31U, 30U, 31U, 30U, 31U };
 
 // Static tags in the display
-const char PgTime::_LINE0[DISPLAY_COLS+1] PROGMEM = "TIEMPO    :  :  ";
+const char PgTime::_LINE0[DISPLAY_COLS+1] PROGMEM = "HORA      :  :  ";
 const char PgTime::_LINE1[DISPLAY_COLS+1] PROGMEM = "UTC     /  /    ";
 
 
@@ -196,7 +196,7 @@ void PgTime::_focusWidget(WgId_t WgId)
 bool PgTime::_validDate() const
 {
   uint8_t Month = _Values[WgMonth];
-  uint8_t MaxDay = _NUM_DAYS_PER_MONTH[Month];
+  uint8_t MaxDay = _NUM_DAYS_PER_MONTH[Month-1];  // Month is in range [1,12]
 
   // Special case for February on leap year
   if (Month == 2 && _leapYear(_Values[WgYear]))
