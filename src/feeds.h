@@ -29,13 +29,14 @@ public:
   Feeds();
   void init(const DateTime &Now);
   void reset(const DateTime &Now);
+  void resetEeprom();
   uint8_t check(const DateTime &Now);
   void skipNext();
   void unskipNext();
   bool isSkippingNext() const;
   Next_t timeOfNext(uint8_t *pDotw, uint8_t *pHour, uint8_t *pMinute) const;
   Meal *getMeal(uint8_t Id);
-  // void setMeal(const DateTime &Now, uint8_t Id, const Meal &NewMeal);
+  void saveMeal(uint8_t Id);
 
 protected:
   static const uint8_t _ID_NULL = UINT8_MAX;

@@ -7,9 +7,8 @@
 /********************/
 
 // Text to display in the page
-const char *const PgConfig::_LINES[DISPLAY_ROWS] PROGMEM = { _LINE0, _LINE1 };
-const char PgConfig::_LINE0[DISPLAY_COLS+1] PROGMEM = " SALTAR  NO SALT";
-const char PgConfig::_LINE1[DISPLAY_COLS+1] PROGMEM = " HORA    COMIDAS";
+const char PgConfig::_LINE0[DISPLAY_COLS+1] PROGMEM = " SALTAR  COMIDAS";
+const char PgConfig::_LINE1[DISPLAY_COLS+1] PROGMEM = " HORA    RESET  ";
 
 
 /***********/
@@ -41,9 +40,9 @@ PageAction PgConfig::PgConfig::focus()
 {
   // Draw page
   _Lcd.setCursor(0, 0);
-  _Lcd.print((const __FlashStringHelper *) pgm_read_ptr(_LINES + 0));
+  _Lcd.print((const __FlashStringHelper *) _LINE0);
   _Lcd.setCursor(0, 1);
-  _Lcd.print((const __FlashStringHelper *) pgm_read_ptr(_LINES + 1));
+  _Lcd.print((const __FlashStringHelper *) _LINE1);
 
   // Draw select widget
   _Select.focus();
@@ -66,17 +65,17 @@ PageAction PgConfig::event(const Event &E)
   switch (_Select.event(E))
   {
   case 0:
-    // Skip next meal
+    // Skip/unskip next meal
     return PageAction(Action::AcSkipMeal);
   case 1:
-    // Unskip next meal
-    return PageAction(Action::AcUnskipMeal);
+    // Go to config meals page
+    return PageAction(&_PgMeal);
   case 2:
     // Go to config time page
     return PageAction(&_PgTime);
   case 3:
-    // Go to config meals page
-    return PageAction(&_PgMeal);
+    // Clear meals and reset board
+    return PageAction(Action::AcReset);
   case Widget::AcBack:
     // Go back to parent page
     return PageAction(_pParent);

@@ -34,28 +34,34 @@ void Feeds::init(const DateTime &Now)
   // Read magic record and check for validity
   if (EEPROM.read(_MAGIC_ADDR) != _MAGIC_NUMBER)
   {
-Serial.println(F("Eeprom magic KO: Save"));
     // Magic record has incorrect value -> initialize EEPROM data
     // First write meals data
     for (Id=0; Id<NUM_MEALS; Id++)
       _Meals[Id].saveEeprom();
 
     // Then write valid magic number
-//    EEPROM.write(_MAGIC_ADDR, _MAGIC_NUMBER);
+    EEPROM.write(_MAGIC_ADDR, _MAGIC_NUMBER);
   }
   else
   {
-Serial.println(F("Eeprom magic OK: Read"));
     // Magic number is correct, read saved meals from EEPROM
     for (Id=0; Id<NUM_MEALS; Id++)
       _Meals[Id].loadEeprom();
   }
-Serial.flush();
 
   // Set next (first) meal
   _updateNext(Now);
 }
 
+
+/*
+ *   Sets the EEPROM to an invalid state so the next boot will initialize it.
+ */
+void Feeds::resetEeprom()
+{
+  // Unset the magic number, e.g. writing its value inverted
+  EEPROM.write(_MAGIC_ADDR, ~_MAGIC_NUMBER);
+}
 
 /*
  *   Reset the object with a new current time. All meals until it will be
@@ -221,20 +227,14 @@ Meal *Feeds::getMeal(uint8_t Id)
 
 
 /*
- *   A meal data has changed. This method updates it and then resets the
- *  object, skipping to the new time without dispensing any meal and
- *  the skip next meal flag is disabled.
+ *   Saves meal data to EEPROM.
+ *  Parameters:
+ *  * Id: meal identifier.
  */
-/*
-void Feeds::setMeal(const DateTime &Now, uint8_t Id, const Meal &NewMeal)
+void Feeds::saveMeal(uint8_t Id)
 {
-  // Update the meal
-  _Meals[Id] = NewMeal;
-
-  // Reset object skipping to the Now time
-  reset(Now);
+  _Meals[Id].saveEeprom();
 }
-*/
 
 
 /*

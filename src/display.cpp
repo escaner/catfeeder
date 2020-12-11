@@ -34,8 +34,6 @@ Serial.flush();
   // Is there a focus change?
   if (PgA.pFocusPage != nullptr)
   {
-Serial.println(F("PGACTION:focus chg"));
-Serial.flush();
     assert(PgA.pFocusPage != _pFocusPage);  // Focus really changes
 
     // Update focus page and draw it
@@ -63,8 +61,30 @@ Serial.flush();
  */
 void Display::error(const char *pMsg)
 {
-  _Lcd.clear();
-  _Lcd.write("ERROR:");
-  _Lcd.setCursor(0, 1);
+  _error();
   _Lcd.write(pMsg);
+}
+
+
+/*
+ *   Shows an error message in the display. PROGMEM friendly version.
+ *  Parameters:
+ *  * pMsg: string with the error message.
+ */
+void Display::error(const __FlashStringHelper *pMsg)
+{
+  _error();
+  _Lcd.print(pMsg);
+}
+
+
+/*
+ *   Displays Error in the first line of the display and prepares the second
+ *  one for the message.
+ */
+void Display::_error()
+{
+  _Lcd.clear();
+  _Lcd.print(F("ERROR:"));
+  _Lcd.setCursor(0, 1);
 }

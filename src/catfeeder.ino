@@ -1,4 +1,5 @@
 #include "config.h"
+#include <avr/wdt.h>
 #include "event.h"
 #include "action.h"
 #include "feeds.h"
@@ -73,6 +74,7 @@ static Event eventTime();
 static Event eventNextMeal();
 static bool checkFeedTime();
 static void initClock();
+static void reboot();
 
 
 /*
@@ -256,7 +258,8 @@ static bool sendEventAndHandleActions(Event E)
       break;
     case Action::AcSetMeal:
       DBGPRINTLN("AcSetMeal");
-      FeedData.reset(Rtc.getOfficial());
+      FeedData.saveMeal(A.MealId);        // Save meal data to EEPROM
+      FeedData.reset(Rtc.getOfficial());  // Reset skip & calculate next meal
       End = true;
       break;
     case Action::AcManualFeedStart:
@@ -279,12 +282,16 @@ static bool sendEventAndHandleActions(Event E)
       break;
     case Action::AcSkipMeal:
       DBGPRINTLN("AcSkipMeal");
-      FeedData.skipNext();
+      if (FeedData.isSkippingNext())
+        FeedData.unskipNext();
+      else
+        FeedData.skipNext();
       End = true;
       break;
-    case Action::AcUnskipMeal:
-      DBGPRINTLN("AcUnskipMeal");
-      FeedData.unskipNext();
+    case Action::AcReset:
+      DBGPRINTLN("AcReset");
+      FeedData.resetEeprom();  // Invalidate meal data in EEPROM
+      reboot();                // Reboot the Arduino
       End = true;
       break;
     }
@@ -336,7 +343,7 @@ static void initClock()
   // Initialize RTC and check for error
   if (Rtc.init())
   {
-    Lcd.error("Rtc.init()");
+    Lcd.error(F("Rtc.init()"));
     abort();
   }
 
@@ -349,8 +356,22 @@ static void initClock()
     // Check again
     if (!Rtc.isrunning())
     {
-      Lcd.error("Rtc.init()");
+      Lcd.error(F("Rtc.isrunning()"));
       abort();
     }
   }
+}
+
+
+/*
+ *   Reboots the Arduino by triggering the watchdog.
+ */
+static void reboot()
+{
+  // Enable watchdog to minimum elapsed time: 60ms
+  wdt_enable(WDTO_15MS);
+
+  // Loop forever
+  for (;;)
+    ;
 }

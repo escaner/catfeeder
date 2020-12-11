@@ -10,7 +10,6 @@
 // Static tags in the display
 const char PgMeal::_LINE0[DISPLAY_COLS+1] PROGMEM = "COMIDA#         ";
 const char PgMeal::_LINE1[DISPLAY_COLS+1] PROGMEM = "  :   CANTIDAD  ";
-const char *const PgMeal::_LINES[DISPLAY_ROWS] PROGMEM = { _LINE0, _LINE1 };
 
 
 /***********/
@@ -202,9 +201,9 @@ void PgMeal::_init(Meal *pMeal)
 
     // Draw page
     _Lcd.setCursor(0, _MEAL_ROW);
-    _Lcd.print((const __FlashStringHelper *) pgm_read_ptr(_LINES + _MEAL_ROW));
+    _Lcd.print((const __FlashStringHelper *) _LINE0);
     _Lcd.setCursor(0, _TIME_ROW);
-    _Lcd.print((const __FlashStringHelper *) pgm_read_ptr(_LINES + _TIME_ROW));
+    _Lcd.print((const __FlashStringHelper *) _LINE1);
   }
 
   // Initialize and draw widgets
@@ -247,9 +246,6 @@ PageAction PgMeal::_makeNeedMeal(uint8_t MealId)
 PageAction PgMeal::_makeSetMeal() const
 {
   bool _DotwEn[DotwText::DAYS_IN_A_WEEK];
-
-Serial.println(F("PgMeal::_makeSetMeal"));
-Serial.flush();
 
   // Update _Meal object with time widget values
   _pMeal->setTime(_ValHour, _ValMinute);

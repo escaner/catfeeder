@@ -32,7 +32,7 @@ public:
     AcManualFeedContinue,
     AcManualFeedEnd,
     AcSkipMeal,
-    AcUnskipMeal
+    AcReset
   };
 
   // Constructors

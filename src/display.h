@@ -18,8 +18,11 @@ public:
     uint8_t PinD6, uint8_t PinD7);
   Action event(const Event &E);
   void error(const char *pMsg);
+  void error(const __FlashStringHelper *pMsg);
 
 protected:
+  void _error();
+
   // Member data
   LiquidCrystal _Lcd;  // LCD control class
   PgMain _PgMain;      // Main page

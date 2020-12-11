@@ -11,7 +11,6 @@
 // Text to display in the page
 const char PgMain::_LINE0[] PROGMEM = "%02u:%02u %c %02u/%02u/%02u";
 const char PgMain::_LINE1[] PROGMEM = "SGTE %c%02u:%02u %s";
-const char *const PgMain::_LINES[DISPLAY_ROWS] PROGMEM = { _LINE0, _LINE1 };
 
 // Skip condition text. 0 -> normal, 1 -> served, 2 -> skip
 const char PgMain::_STATUS_TEXT[][_NEXTMEAL_STATUS_SIZE+1U] =
@@ -166,14 +165,9 @@ void PgMain::_drawTime(const DateTime &Time) const
   Year = Time.year() % 100U;
 
   // Generate line to write
-  sprintf_P(Line, pgm_read_ptr(_LINES + 0), (unsigned) Time.hour(),
-    (unsigned) Time.minute(), Dotw, (unsigned) Time.day(),
-    (unsigned) Time.month(), (unsigned) Year);
-Serial.print(F("PgMain:Time:"));
-Serial.println(Line);
-Serial.print(F("strlen:"));
-Serial.println(strlen(Line));
-Serial.flush();
+  sprintf_P(Line, _LINE0, (unsigned) Time.hour(), (unsigned) Time.minute(),
+    Dotw, (unsigned) Time.day(), (unsigned) Time.month(), (unsigned) Year);
+
   assert(strlen(Line) == DISPLAY_COLS);
 
   // Write line in LCD
@@ -202,11 +196,10 @@ void PgMain::_drawNextMeal(const Event::NextMeal_t &NextMeal) const
     // Get single char representation of the day of the week
     Dotw = DotwText::DotwCharEs[NextMeal.Dotw];
     pStatus = _STATUS_TEXT[NextMeal.Status];
-    sprintf_P(Line, pgm_read_ptr(_LINES + 1), Dotw, (unsigned) NextMeal.Hour,
+
+    // Generate line to write
+    sprintf_P(Line, _LINE1, Dotw, (unsigned) NextMeal.Hour,
       (unsigned) NextMeal.Minute, pStatus);
-Serial.print(F("PgMain:NxtMeal:"));
-Serial.println(Line);
-Serial.flush();
   }
   else
   {
@@ -215,9 +208,7 @@ Serial.flush();
     // Add end of string
     Line[DISPLAY_COLS] = '\0';
   }
-Serial.print(F("strlen:"));
-Serial.println(strlen(Line));
-Serial.flush();
+
   assert(strlen(Line) == DISPLAY_COLS);
 
   // Write line in LCD
