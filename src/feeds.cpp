@@ -60,7 +60,7 @@ void Feeds::init(const DateTime &Now)
 void Feeds::resetEeprom()
 {
   // Unset the magic number, e.g. writing its value inverted
-  EEPROM.write(_MAGIC_ADDR, ~_MAGIC_NUMBER);
+  EEPROM.write(_MAGIC_ADDR, (uint8_t) ~_MAGIC_NUMBER);
 }
 
 /*

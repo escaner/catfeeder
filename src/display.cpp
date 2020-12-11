@@ -55,6 +55,28 @@ Serial.flush();
 
 
 /*
+ *  Shows a message in the display indicating that it is being reset.
+ */
+void Display::resetMessage()
+{
+  // Clear the display and show the message
+  _Lcd.clear();
+  _Lcd.print(F("REINICIALIZANDO"));
+  // Prepare cursor for animation
+  _Lcd.setCursor(0, 1);
+}
+
+
+/*
+ *   Called repeatedly to show an animation during reset.
+ */
+void Display::resetAnimation()
+{
+  _Lcd.write('.');
+}
+
+
+/*
  *   Shows an error message in the display.
  *  Parameters:
  *  * pMsg: string with the error message.

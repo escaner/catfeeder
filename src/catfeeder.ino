@@ -368,10 +368,16 @@ static void initClock()
  */
 static void reboot()
 {
-  // Enable watchdog to minimum elapsed time: 60ms
-  wdt_enable(WDTO_15MS);
+  // Clear display and show message
+  Lcd.resetMessage();
 
-  // Loop forever
+  // Enable watchdog to minimum elapsed time: 60ms
+  wdt_enable(WDTO_2S);
+
+  // Loop forever displaying animation
   for (;;)
-    ;
+  {
+    Lcd.resetAnimation();
+    delay(300);
+  }
 }
