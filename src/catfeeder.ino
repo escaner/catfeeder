@@ -7,7 +7,6 @@
 #include "clock.h"
 #include "display.h"
 #include "auger.h"
-#include "dbgserial.h"
 
 
 /*************/
@@ -82,9 +81,6 @@ static void reboot();
  */
 void setup()
 {
-  DBGINIT();
-  DBGPRINTLN("***START***");
-
   // Initialize buttons object
   SwitchPanel.init();
 
@@ -126,7 +122,6 @@ void loop()
     LastCheckFeed = CurTime;
     if (checkFeedTime())
     {
-DBGPRINTLN("Setting lastmealtime");
       LastMealTime = CurTime;
       UpdateMealTime = true;
     }
@@ -135,7 +130,6 @@ DBGPRINTLN("Setting lastmealtime");
   // MEAL_UPDATE_DELAY ms after serving a meal, the LCD next meal is updated
   if (UpdateMealTime && CurTime - LastMealTime >= MEAL_UPDATE_DELAY)
   {
-DBGPRINTLN("-Refresh nxt meal");
     UpdateMealTime = false;
     sendEventAndHandleActions(eventNextMeal());
   }
@@ -152,10 +146,6 @@ DBGPRINTLN("-Refresh nxt meal");
       // Did we get a switch event?
       if ((SwE = SwitchPanel.check()) != Event::SwEvNone)
       {
-Serial.print(F("SWITCH:"));
-Serial.println((unsigned) SwE);
-Serial.flush();
-
        // Build event
         Event E(Event::EvSwitch);
         E.Switch = SwE;
@@ -228,55 +218,45 @@ static bool sendEventAndHandleActions(Event E)
       End = true;
       break;
     case Action::AcNeedTime:
-      DBGPRINTLN("AcNeedTime");
       E = eventTime();
       break;
     case Action::AcNeedNextMeal:
-      DBGPRINTLN("AcNeedNextMeal");
       E = eventNextMeal();
       break;
     case Action::AcNeedTimeUtc:
-      DBGPRINTLN("AcNeedTimeUtc");
       E.Id = Event::EvTimeUtc;
       E.Time = Rtc.getUtc();
       break;
     case Action::AcNeedMeal:
-      DBGPRINTLN("AcNeedMeal");
       E.Id = Event::EvMeal;
       E.pMeal = FeedData.getMeal(A.MealId);
       break;
     case Action::AcSetTimeUtc:
-      DBGPRINTLN("AcSetTimeUtc");
       Rtc.setUtc(A.Time);
       FeedData.reset(Rtc.getOfficial());  // Reset skip & calculate next meal
       End = true;
       break;
     case Action::AcSetMeal:
-      DBGPRINTLN("AcSetMeal");
       FeedData.saveMeal(A.MealId);        // Save meal data to EEPROM
       FeedData.reset(Rtc.getOfficial());  // Reset skip & calculate next meal
       End = true;
       break;
     case Action::AcManualFeedStart:
-      DBGPRINTLN("AcManualFeedStart");
       Edsm.startFeeding();
       Feeding = true;
       End = true;
       break;
     case Action::AcManualFeedContinue:
-      DBGPRINTLN("AcManualFeedContinue");
       Edsm.keepFeeding();
       Feeding = true;
       End = true;
       break;
     case Action::AcManualFeedEnd:
-      DBGPRINTLN("AcManualFeedEnd");
       Edsm.endFeeding();
       // Feeding = false;
       End = true;
       break;
     case Action::AcSkipMeal:
-      DBGPRINTLN("AcSkipMeal");
       if (FeedData.isSkippingNext())
         FeedData.unskipNext();
       else
@@ -284,7 +264,6 @@ static bool sendEventAndHandleActions(Event E)
       End = true;
       break;
     case Action::AcReset:
-      DBGPRINTLN("AcReset");
       FeedData.resetEeprom();  // Invalidate meal data in EEPROM
       reboot();                // Reboot the Arduino
       End = true;

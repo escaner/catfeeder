@@ -24,12 +24,6 @@ Action Display::event(const Event &E)
 {
   PageAction PgA;
 
-if (E.Id!=Event::EvTime)
-{
-Serial.print(F("EVENT:"));
-Serial.println((unsigned) E.Id);
-Serial.flush();
-}
   // Pass event to focus page
   PgA = _pFocusPage->event(E);
 
@@ -46,13 +40,6 @@ Serial.flush();
     if (PgA.MainAction.Id == Action::AcNone)
       PgA = PgAFocus;
   }
-
-if (PgA.MainAction.Id!=Action::AcNone)
-{
-Serial.print(F("ACTION:"));
-Serial.println((unsigned) PgA.MainAction.Id);
-Serial.flush();
-}
 
   // Return the standard Action
   return PgA.MainAction;
