@@ -83,22 +83,18 @@ static void reboot();
 void setup()
 {
   DBGINIT();
-  DBGPRINTLN("START");
+  DBGPRINTLN("***START***");
 
   // Initialize buttons object
-  DBGPRINTLN("Init switches");
   SwitchPanel.init();
 
   // Initialize RTC and check for errors
-  DBGPRINTLN("Init RTC");
   initClock();
 
   // Initialize feed data structure
-  DBGPRINTLN("Init data");
   FeedData.init(Rtc.getOfficial());
 
   // Send event to initialize display
-  DBGPRINTLN("Init main page");
   sendEventAndHandleActions(Event(Event::EvInit));
 }
 
@@ -110,8 +106,8 @@ void loop()
 {
   static unsigned long LastCheckFeed = 0UL;
   static unsigned long LastUpdateTime = 0UL;
-  static unsigned long LastMealTime = 0UL;
-  bool UpdateMealTime = false;
+  static unsigned long LastMealTime;
+  static bool UpdateMealTime = false;
   unsigned long CurTime;
 
   // Get current time
@@ -120,7 +116,6 @@ void loop()
   // Check update time (counter overflow works well)
   if (CurTime - LastUpdateTime >= TIME_UPDATE_INTERVAL)
   {
-    DBGPRINTLN("Updating display time");
     LastUpdateTime = CurTime;
     sendEventAndHandleActions(eventTime());
   }
@@ -128,10 +123,10 @@ void loop()
   // Check feed time every FEED_CHECK_INTERVAL ms (counter overflow works well)
   if (CurTime - LastCheckFeed >= FEED_CHECK_INTERVAL)
   {
-    DBGPRINTLN("Checking feed time");
     LastCheckFeed = CurTime;
     if (checkFeedTime())
     {
+DBGPRINTLN("Setting lastmealtime");
       LastMealTime = CurTime;
       UpdateMealTime = true;
     }
@@ -140,7 +135,7 @@ void loop()
   // MEAL_UPDATE_DELAY ms after serving a meal, the LCD next meal is updated
   if (UpdateMealTime && CurTime - LastMealTime >= MEAL_UPDATE_DELAY)
   {
-    DBGPRINTLN("Refresh nxt meal");
+DBGPRINTLN("-Refresh nxt meal");
     UpdateMealTime = false;
     sendEventAndHandleActions(eventNextMeal());
   }
@@ -321,6 +316,9 @@ static bool checkFeedTime()
   // It is meal time when the quantity > 0
   if (Quantity)
   {
+Serial.print(F("Deliver Meal:"));
+Serial.println(Quantity);
+Serial.flush();
     // Deliver meal
     Edsm.feed(Quantity);
 
