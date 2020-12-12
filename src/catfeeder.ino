@@ -307,24 +307,24 @@ static bool sendEventAndHandleActions(Event E)
  */
 static bool checkFeedTime()
 {
-  uint8_t Quantity;
+  int8_t Quantity;
   bool MealServed = false;
 
   // Get current official time from the RTC and check whether it is meal time
   Quantity = FeedData.check(Rtc.getOfficial());
 
-  // It is meal time when the quantity > 0
+  // It is meal time when the quantity is not 0
   if (Quantity)
   {
-Serial.print(F("Deliver Meal:"));
-Serial.println(Quantity);
-Serial.flush();
-    // Deliver meal
-    Edsm.feed(Quantity);
+    // Positive quantity is meal amount, negative when we are skipping the meal
+    if (Quantity > 0)
+      // Deliver meal
+      Edsm.feed(Quantity);
 
     // Update LCD
     sendEventAndHandleActions(eventNextMeal());
 
+    // Both when served and skipped, signal to update display later
     MealServed = true;
   }
 

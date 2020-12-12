@@ -30,7 +30,7 @@ public:
   void init(const DateTime &Now);
   void reset(const DateTime &Now);
   void resetEeprom();
-  uint8_t check(const DateTime &Now);
+  int8_t check(const DateTime &Now);
   void skipNext();
   void unskipNext();
   bool isSkippingNext() const;

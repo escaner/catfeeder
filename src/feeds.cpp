@@ -87,9 +87,12 @@ void Feeds::reset(const DateTime &Now)
  *  It also updates the object for the next meal.
  *  Parameters:
  *  * Now: current official time
- *  Returns: quantity of food to deliver from 1 to 9; 0 means no meal
+ *  Returns:
+ *  * 0: not time to deliver food
+ *  * 1-9: quantity of food to deliver
+ *  * -1: a meal has been just skipped
  */
-uint8_t Feeds::check(const DateTime &Now)
+int8_t Feeds::check(const DateTime &Now)
 {
   uint8_t Quantity = 0U;
   const Meal *pMeal;
@@ -125,7 +128,8 @@ uint8_t Feeds::check(const DateTime &Now)
         {
           // Reset skip for the next to this one we are skipping
           _SkipNextMeal = false;
-          // skip this one: Quantity = 0
+          // It was meal time but it was skipped
+          Quantity = -1;
         }
       }
       // else: already checked this very minute, Quantity = 0
