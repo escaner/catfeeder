@@ -18,6 +18,7 @@ public:
   static const uint8_t FIRST_DOTW_ES = 1U;
   static const uint8_t FIRST_DOTW_EN = 0U;
 
+  // Store day of the week representations in arrays (range [0,6])
   static char DotwCharEs[DAYS_IN_A_WEEK];
   //static char DotwCharEn[DAYS_IN_A_WEEK];
 

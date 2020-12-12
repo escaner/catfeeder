@@ -78,8 +78,6 @@ void Meal::setDotw(const bool pDotwArray[])
 
   // Set
   _Meal.Dotw = Dotw;
-Serial.print(F("setDotw:"));
-Serial.println(Dotw, 1);
 }
 
 
@@ -180,8 +178,8 @@ bool Meal::compare(const Meal &OtherMeal, const DateTime &TimeRef,
   RefMinute = TimeRef.minute();
 
   // Get time to next occurrence of each meal
-  ThisSpan = _timeDifference(RefDotw, RefHour, RefMinute);
-  OtherSpan = OtherMeal._timeDifference(RefDotw, RefHour, RefMinute);
+  ThisSpan = timeDifference(RefDotw, RefHour, RefMinute);
+  OtherSpan = OtherMeal.timeDifference(RefDotw, RefHour, RefMinute);
 
   // Which one is earlier?
   if (ThisSpan.totalseconds() > OtherSpan.totalseconds())
@@ -198,6 +196,56 @@ bool Meal::compare(const Meal &OtherMeal, const DateTime &TimeRef,
   }
 
   return OtherFirst;
+}
+
+
+/*
+ *   Calculates the time from the reference time and day of the week to the
+ *  next occurrence of this meal.
+ *   The result is undefined if this meal has no day of the week enabled.
+ *  Parameters:
+ *  * RefDotw: day of the week of the reference time.
+ *  * RefHour: hour fraction of the reference time.
+ *  * RefMinute: minute fraction of the reference time.
+ *  Return: a TimeSpan with the difference in time. It will always be positive
+ *  because this meal is assumed to occur later then the reference time.
+ */
+TimeSpan Meal::timeDifference(uint8_t RefDotw, uint8_t RefHour,
+  uint8_t RefMinute) const
+{
+  uint8_t MealDotw, MealHour, MealMinute;
+  uint8_t Days, Hours, Minutes;
+
+  // Get day of the week for next occurrence
+  MealDotw = _nextOccurrenceDotw(RefDotw, RefHour, RefMinute);
+  MealHour = _Meal.Hour;
+  MealMinute = _Meal.Minute;
+
+  // Minute difference
+  if (MealMinute < RefMinute)
+  {
+    // Avoid negative overflow, take an hour
+    MealMinute += _MINUTES_IN_AN_HOUR;
+    RefHour++;
+  }
+  Minutes = MealMinute - RefMinute;
+
+  // Hour difference
+  if (MealHour < RefHour)
+  {
+    // Avoid negative overflow, take a day
+    MealHour += _HOURS_IN_A_DAY;
+    RefDotw++;
+  }
+  Hours = MealHour - RefHour;
+
+  // Day difference
+  if (MealDotw < RefDotw)
+    // Avoid negative overflow, delay meal a week
+    MealDotw += DotwText::DAYS_IN_A_WEEK;
+  Days = MealDotw - RefDotw;
+    
+  return TimeSpan(Days, Hours, Minutes, 0U);
 }
 
 
@@ -258,9 +306,9 @@ bool Meal::loadEeprom()
 
 /*
  *   Finds the day of the week for the next occurrence of this meal
- *  after (but not equeal) the reference time and day of the week.
+ *  after (but not equal) the reference time and day of the week.
  *  Parameters:
- *  * RefDotw: reference day of the week
+ *  * RefDotw: reference day of the week with range [0,6]
  *  * RefHour: reference hour
  *  * RefMinute: reference minute
  *  Returns: day of the week of the next occurrence of this meal. If the meal
@@ -285,6 +333,7 @@ uint8_t Meal::_nextOccurrenceDotw(uint8_t RefDotw, uint8_t RefHour,
       // If this day of the week is enabled, any time is good: found
       if (bitRead(_Meal.Dotw, MealDotw))
         break;
+
     // If we reach this point exiting the loop by its condition, MealDotw will
     // be again RefDotw. Two possibilities:
     // 1. The DOTW is enabled in this meal but was a previous time the same day.
@@ -292,54 +341,4 @@ uint8_t Meal::_nextOccurrenceDotw(uint8_t RefDotw, uint8_t RefHour,
   }
 
   return MealDotw;
-}
-
-
-/*
- *   Calculates the time from the reference time and day of the week to the
- *  next occurrence of this meal.
- *   The result is undefined if this meal has no day of the week enabled.
- *  Parameters:
- *  * RefDotw: day of the week of the reference time.
- *  * RefHour: hour fraction of the reference time.
- *  * RefMinute: minute fraction of the reference time.
- *  Return: a TimeSpan with the difference in time. It will always be positive
- *  because this meal is assumed to occur later then the reference time.
- */
-TimeSpan Meal::_timeDifference(uint8_t RefDotw, uint8_t RefHour,
-  uint8_t RefMinute) const
-{
-  uint8_t MealDotw, MealHour, MealMinute;
-  uint8_t Days, Hours, Minutes;
-
-  // Get day of the week for next occurrence
-  MealDotw = _nextOccurrenceDotw(RefDotw, RefHour, RefMinute);
-  MealHour = _Meal.Hour;
-  MealMinute = _Meal.Minute;
-
-  // Minute difference
-  if (MealMinute < RefMinute)
-  {
-    // Avoid negative overflow, take an hour
-    MealMinute += _MINUTES_IN_AN_HOUR;
-    RefHour++;
-  }
-  Minutes = MealMinute - RefMinute;
-
-  // Hour difference
-  if (MealHour < RefHour)
-  {
-    // Avoid negative overflow, take a day
-    MealHour += _HOURS_IN_A_DAY;
-    RefDotw++;
-  }
-  Hours = MealHour - RefHour;
-
-  // Day difference
-  if (MealDotw < RefDotw)
-    // Avoid negative overflow, delay meal a week
-    MealDotw += DotwText::DAYS_IN_A_WEEK;
-  Days = MealDotw - RefDotw;
-    
-  return TimeSpan(Days, Hours, Minutes, 0U);
 }

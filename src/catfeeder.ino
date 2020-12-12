@@ -371,12 +371,13 @@ static void reboot()
   // Clear display and show message
   Lcd.resetMessage();
 
-  // Enable watchdog to minimum elapsed time: 60ms
+  // Enable watchdog to 2s
   wdt_enable(WDTO_2S);
 
-  // Loop forever displaying animation
+  // Loop forever so watchdog engages and resets
   for (;;)
   {
+    // Display animation while waiting the reboot
     Lcd.resetAnimation();
     delay(300);
   }

@@ -29,6 +29,8 @@ public:
   bool isEnabled() const;
   bool compare(const Meal &OtherMeal, const DateTime &TimeRef, TimeSpan *pSpan)
     const;
+  TimeSpan timeDifference(uint8_t RefDotw, uint8_t RefHour,
+    uint8_t RefMinute) const;
   bool matchesTime(const DateTime &Time) const;
   bool saveEeprom() const;
   bool loadEeprom();
@@ -41,7 +43,7 @@ protected:
   {
     uint8_t Hour;      // 24h format hour fraction of the meal
     uint8_t Minute;    // Minute fraction of the time of the meal 
-    byte Dotw;         // Days of the week the meal is enabled
+    byte Dotw;         // Days of the week the meal is enabled in bits [0,6]
     uint8_t Quantity;  // Food quantity to dispense in this meal. 0 = disabled
   };
 
@@ -49,8 +51,6 @@ protected:
   int _EepromAddress;  // Arduino EEPROM memory address assigned to this object
 
   uint8_t _nextOccurrenceDotw(uint8_t RefDotw, uint8_t RefHour,
-    uint8_t RefMinute) const;
-  TimeSpan _timeDifference(uint8_t RefDotw, uint8_t RefHour,
     uint8_t RefMinute) const;
 };
 

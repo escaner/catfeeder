@@ -63,6 +63,7 @@ void Feeds::resetEeprom()
   EEPROM.write(_MAGIC_ADDR, (uint8_t) ~_MAGIC_NUMBER);
 }
 
+
 /*
  *   Reset the object with a new current time. All meals until it will be
  *  skipped, next meal is re-calculated and the skip next meal status is also
@@ -249,26 +250,24 @@ void Feeds::_updateNext(const DateTime &Now)
   TimeSpan NextMealSpan;
   uint8_t Id;
 
-Serial.println(F("Feeds:updateNext"));
   // When we have no next meal selected, find first active meal
   for (Id=0; _NextMealId==_ID_NULL && Id<NUM_MEALS; Id++)
     if (_Meals[Id].isEnabled())
+    {
       _NextMealId = Id;
-Serial.print(F("First:"));
-Serial.println(_NextMealId);
-Serial.flush();
+      // Calculate time span to this meal
+      NextMealSpan = _Meals[_NextMealId].timeDifference(Now.dayOfTheWeek(),
+        Now.hour(), Now.minute());
+    }
 
   // Continue loop through the rest of the meals and find the closest next one
   for (; Id<NUM_MEALS; Id++)
-    // Do not compare with itself
-    if (Id != _NextMealId)
+    // Looking for enabled meals that are not _MextMealId
+    if (Id != _NextMealId && _Meals[Id].isEnabled())
       // If Id comes sooner than _NextMealId
       if (_Meals[_NextMealId].compare(_Meals[Id], Now, &NextMealSpan))
         // We have a new earliest Meal -> update
         _NextMealId = Id;
-Serial.print(F("Next:"));
-Serial.println(_NextMealId);
-Serial.flush();
 
   // If we found a winner, calculate its DOTW
   if (_NextMealId != _ID_NULL)

@@ -10,7 +10,7 @@ temporarily fails.
 
 This is the list of electronic parts for the project:
 
-* 1 x Arduino Nano microcontroller
+* 1 x Arduino Nano compatible microcontroller
 * 1 x SchmalzHaus EasyDriver: stepper motor controller
 * 1 x Hanpose 17HS3430 stepper motor
 * 1 x 1602 LCD display
@@ -18,8 +18,11 @@ This is the list of electronic parts for the project:
 * 1 x Potentiometer 10 KOhm for display contrast
 * 1 x rotary encoder with pushbutton
 * 1 x temporary pushbutton
-* 1 x Robotdyn DS1307 I2C RTC module with battery as backup real time clock
+* 1 x Robotdyn DS1307 I2C RTC module with battery as real time clock and backup
 
+Note that in order for the reset function to correctly work, the Arduino Nano
+needs to have the new Optiboot bootloader: the old one bugs out on reset
+with the watchdog library.
 
 More info can be found in the doc directory, including schematics and
 pictures. Note that the schematic picture is as seen from the back.

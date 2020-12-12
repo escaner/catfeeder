@@ -43,7 +43,7 @@ public:
 
   struct NextMeal_t
   {
-    uint8_t Dotw;
+    uint8_t Dotw;  // Range [0,6] being 0 Sunday (like DateTime class)
     uint8_t Hour;
     uint8_t Minute;
     Feeds::Next_t Status;
