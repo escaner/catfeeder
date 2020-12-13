@@ -2,7 +2,6 @@
 #define _CONFIG_H_
 
 #define NDEBUG
-//#define NDEBUG_SERIAL
 #define __ASSERT_USE_STDERR
 
 #include <Arduino.h>

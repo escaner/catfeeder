@@ -7,7 +7,7 @@
 #include "page.h"
 #include "wgint.h"
 #include "wgabool.h"
-#include "dotwtext.h"
+#include "dotwutil.h"
 
 
 /*
@@ -68,8 +68,8 @@ protected:
   static const char _LINE1[DISPLAY_COLS+1] PROGMEM;
 
   // Arrays with single letter representations of indexes
-  char _DOTW_CHAR_FALSE[DotwText::DAYS_IN_A_WEEK];
-  char _DOTW_CHAR_TRUE[DotwText::DAYS_IN_A_WEEK];
+  char _DOTW_CHAR_FALSE[DotwUtil::DAYS_IN_A_WEEK];
+  char _DOTW_CHAR_TRUE[DotwUtil::DAYS_IN_A_WEEK];
 
   // Protected methods
   void _init(Meal *pMeal);
@@ -96,7 +96,7 @@ protected:
   uint16_t _ValHour;
   uint16_t _ValMinute;
   uint16_t _ValQuantity;
-  bool _ValDotw[DotwText::DAYS_IN_A_WEEK];
+  bool _ValDotw[DotwUtil::DAYS_IN_A_WEEK];
   Widget *_Widgets[_NUM_WIDGETS_TIME+1];  // For easy management of widgets
   WgId_t _FocusWidget;  // Which widget has the focus
   Meal *_pMeal;  // The meal that we are displaying and modifying

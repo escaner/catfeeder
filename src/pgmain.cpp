@@ -1,7 +1,7 @@
 #include "config.h"
 #include <assert.h>
 #include "pgmain.h"
-#include "dotwtext.h"
+#include "dotwutil.h"
 
 
 /********************/
@@ -160,7 +160,7 @@ void PgMain::_drawTime(const DateTime &Time) const
   _Lcd.setCursor(_TIME_COL, _TIME_ROW);
 
   // Get single char representation of the day of the week
-  Dotw = DotwText::DotwCharEs[Time.dayOfTheWeek()];
+  Dotw = DotwUtil::DotwCharEs[Time.dayOfTheWeek()];
   // Get last 2 digits from the year
   Year = Time.year() % 100U;
 
@@ -194,7 +194,7 @@ void PgMain::_drawNextMeal(const Event::NextMeal_t &NextMeal) const
   {
     // Yes
     // Get single char representation of the day of the week
-    Dotw = DotwText::DotwCharEs[NextMeal.Dotw];
+    Dotw = DotwUtil::DotwCharEs[NextMeal.Dotw];
     pStatus = _STATUS_TEXT[NextMeal.Status];
 
     // Generate line to write

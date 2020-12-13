@@ -1,5 +1,5 @@
-#ifndef _DOTWTEXT_H_
-#define _DOTWTEXT_H_
+#ifndef _DOTWUTIL_H_
+#define _DOTWUTIL_H_
 
 #include "config.h"
 #include <Arduino.h>
@@ -10,7 +10,7 @@
  *  Defaults to index 0 representing Sunday. For localization purposes,
  *  constants with the local first day of the week are provided.
  */
-class DotwText
+class DotwUtil
 {
 public:
   // Public Constants
@@ -40,7 +40,7 @@ public:
  *  * Increment: number of days to add.
  *  Returns the calculated new day of the week [0,6]
  */
-inline uint8_t DotwText::incr(uint8_t &DotwId, uint8_t Increment)
+inline uint8_t DotwUtil::incr(uint8_t &DotwId, uint8_t Increment)
 {
   DotwId += Increment;
   DotwId %= DAYS_IN_A_WEEK;
@@ -57,7 +57,7 @@ inline uint8_t DotwText::incr(uint8_t &DotwId, uint8_t Increment)
  *  * Increment: number of days to add.
  *  Returns the calculated new day of the week [0,6]
  */
-inline uint8_t DotwText::add(uint8_t DotwId, uint8_t Increment)
+inline uint8_t DotwUtil::add(uint8_t DotwId, uint8_t Increment)
 {
   DotwId += Increment;
   DotwId %= DAYS_IN_A_WEEK;
@@ -66,4 +66,4 @@ inline uint8_t DotwText::add(uint8_t DotwId, uint8_t Increment)
 }
 
 
-#endif  // _DOTWTEXT_H_
+#endif  // _DOTWUTIL_H_

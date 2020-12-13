@@ -2,7 +2,7 @@
 #include <assert.h>
 #include <EEPROM.h>
 #include "meal.h"
-#include "dotwtext.h"
+#include "dotwutil.h"
 
 
 /***********/
@@ -13,6 +13,8 @@
 /*
  *   Constructor. Initializes EEPROM address.
  *  Parameters:
+ *  * Hour: 24h format hour
+ *  * Minute: minute fraction of the time
  *  * EepromAddress: EEPROM load/save address for this object.
  */
 Meal::Meal(uint8_t Hour, uint8_t Minute, int EepromAddress):
@@ -60,7 +62,7 @@ void Meal::setTime(uint8_t Hour, uint8_t Minute)
  */
 void Meal::setDotw(const bool pDotwArray[])
 {
-  int8_t Idx = (int8_t) DotwText::DAYS_IN_A_WEEK;
+  int8_t Idx = (int8_t) DotwUtil::DAYS_IN_A_WEEK;
   byte Dotw = 0U;
 
   // Pack array of 7 bools into a byte
@@ -119,7 +121,7 @@ void Meal::getDotw(bool pDotwArray[]) const
   byte Dotw = _Meal.Dotw;
 
   // Unack byte of 7 DOTW bits into array of 7 bools.
-  for (Idx = 0U; Idx<DotwText::DAYS_IN_A_WEEK; Idx++)
+  for (Idx = 0U; Idx<DotwUtil::DAYS_IN_A_WEEK; Idx++)
   {
     // Get bit and store it as bool
     pDotwArray[Idx] = (bool) (Dotw & 0b1);
@@ -242,7 +244,7 @@ TimeSpan Meal::timeDifference(uint8_t RefDotw, uint8_t RefHour,
   // Day difference
   if (MealDotw < RefDotw)
     // Avoid negative overflow, delay meal a week
-    MealDotw += DotwText::DAYS_IN_A_WEEK;
+    MealDotw += DotwUtil::DAYS_IN_A_WEEK;
   Days = MealDotw - RefDotw;
     
   return TimeSpan(Days, Hours, Minutes, 0U);
@@ -328,8 +330,8 @@ uint8_t Meal::_nextOccurrenceDotw(uint8_t RefDotw, uint8_t RefHour,
       (_Meal.Hour>RefHour || (_Meal.Hour==RefHour && _Meal.Minute>RefMinute))))
   {
     // ... otherwise, keep looking up to one week later
-    for (DotwText::incr(MealDotw, 1); MealDotw!=RefDotw;
-         DotwText::incr(MealDotw, 1))
+    for (DotwUtil::incr(MealDotw, 1); MealDotw!=RefDotw;
+         DotwUtil::incr(MealDotw, 1))
       // If this day of the week is enabled, any time is good: found
       if (bitRead(_Meal.Dotw, MealDotw))
         break;

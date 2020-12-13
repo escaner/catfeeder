@@ -28,7 +28,7 @@ PgMeal::PgMeal(Page *pParent, LiquidCrystal &Lcd):
   _pParent(pParent),
   _Initialized(false),
   _WgDotw(Lcd, _MEAL_DOTW_COL, _MEAL_ROW, _DOTW_CHAR_TRUE, _DOTW_CHAR_FALSE,
-    DotwText::DAYS_IN_A_WEEK),
+    DotwUtil::DAYS_IN_A_WEEK),
   _WgMeal(Lcd, _MEAL_MEAL_COL, _MEAL_ROW, _MEAL_MEAL_SIZE),
   _WgHour(Lcd, _TIME_HOUR_COL, _TIME_ROW, _TIME_HOUR_SIZE),
   _WgMinute(Lcd, _TIME_MINUTE_COL, _TIME_ROW, _TIME_MINUTE_SIZE),
@@ -42,11 +42,11 @@ PgMeal::PgMeal(Page *pParent, LiquidCrystal &Lcd):
   _Widgets[WgMeal] = &_WgMeal;
 
   // Prepare the character representations of the DOTW in ES locale
-  for (uint8_t Dotw=0U; Dotw<DotwText::DAYS_IN_A_WEEK; Dotw++)
+  for (uint8_t Dotw=0U; Dotw<DotwUtil::DAYS_IN_A_WEEK; Dotw++)
   {
-    uint8_t DotwEn = DotwText::add(Dotw, 1U);
-    _DOTW_CHAR_TRUE[Dotw] = toupper(DotwText::DotwCharEs[DotwEn]);
-    _DOTW_CHAR_FALSE[Dotw] = tolower(DotwText::DotwCharEs[DotwEn]);
+    uint8_t DotwEn = DotwUtil::add(Dotw, 1U);
+    _DOTW_CHAR_TRUE[Dotw] = toupper(DotwUtil::DotwCharEs[DotwEn]);
+    _DOTW_CHAR_FALSE[Dotw] = tolower(DotwUtil::DotwCharEs[DotwEn]);
   }
 }
 
@@ -181,7 +181,7 @@ PageAction PgMeal::event(const Event &E)
 void PgMeal::_init(Meal *pMeal)
 {
   uint8_t Hour, Minute;
-  bool DotwEn[DotwText::DAYS_IN_A_WEEK];
+  bool DotwEn[DotwUtil::DAYS_IN_A_WEEK];
 
   // Save pointer to the meal
   _pMeal = pMeal;
@@ -248,7 +248,7 @@ PageAction PgMeal::_makeNeedMeal(uint8_t MealId)
  */
 PageAction PgMeal::_makeSetMeal() const
 {
-  bool _DotwEn[DotwText::DAYS_IN_A_WEEK];
+  bool _DotwEn[DotwUtil::DAYS_IN_A_WEEK];
 
   // Update _Meal object with time widget values
   _pMeal->setTime(_ValHour, _ValMinute);
@@ -306,10 +306,10 @@ void PgMeal::_focusNextTimeWidget()
 void PgMeal::_rearrangeDotwToEn(bool *pDst, const bool *pSrc) const
 {
   // Copy all the correlative ones
-  memcpy(pDst+1, pSrc, (DotwText::DAYS_IN_A_WEEK - 1U) * sizeof (bool));
+  memcpy(pDst+1, pSrc, (DotwUtil::DAYS_IN_A_WEEK - 1U) * sizeof (bool));
 
   // Copy the missing one
-  pDst[0] = pSrc[DotwText::DAYS_IN_A_WEEK - 1U];
+  pDst[0] = pSrc[DotwUtil::DAYS_IN_A_WEEK - 1U];
 }
 
 
@@ -322,8 +322,8 @@ void PgMeal::_rearrangeDotwToEn(bool *pDst, const bool *pSrc) const
 void PgMeal::_rearrangeDotwFromEn(bool *pDst, const bool *pSrc) const
 {
   // Copy all the correlative ones
-  memcpy(pDst, pSrc+1, (DotwText::DAYS_IN_A_WEEK - 1U) * sizeof (bool));
+  memcpy(pDst, pSrc+1, (DotwUtil::DAYS_IN_A_WEEK - 1U) * sizeof (bool));
 
   // Copy the missing one
-  pDst[DotwText::DAYS_IN_A_WEEK - 1U] = pSrc[0];
+  pDst[DotwUtil::DAYS_IN_A_WEEK - 1U] = pSrc[0];
 }

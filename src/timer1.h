@@ -5,7 +5,7 @@
 
 
 /*
- *   Handles timer1 and allow switching the Interrupt
+ *   Handles timer1 and allows switching the Interrupt
  *  Server Routine.
  *   As ISR() macro does not work inside of a class, we need to implement
  *  this as a module.
