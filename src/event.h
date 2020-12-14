@@ -29,7 +29,7 @@ public:
     EvNextMeal  // Carrying info about the next meal
   };
 
-  // Event that can be returned regarding the switch user input
+  // In case of EvSwitch, which switch has the user activated
   enum SwitchEvent: uint8_t
   {
     SwEvNone=0,        // No input switch event
@@ -41,6 +41,7 @@ public:
     SwEvBackRelease    // Back button release event
   };
 
+  // Further data for EvNextMeal
   struct NextMeal_t
   {
     uint8_t Dotw;  // Range [0,6] being 0 Sunday (like DateTime class)

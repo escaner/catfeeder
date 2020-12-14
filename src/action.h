@@ -19,6 +19,7 @@ public:
   /* Data types */
   /**************/
 
+  // Type of requested action
   enum ActionId: uint8_t
   {
     AcNone=0,
