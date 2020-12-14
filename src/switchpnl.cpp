@@ -79,7 +79,7 @@ Event::SwitchEvent SwitchPnl::check()
     return Event::SwEvBackRelease;
   }
 
- #pragma GCC diagnostic pop
+#pragma GCC diagnostic pop
  
   return Event::SwEvNone;
 }

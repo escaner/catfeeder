@@ -146,7 +146,7 @@ void loop()
       // Did we get a switch event?
       if ((SwE = SwitchPanel.check()) != Event::SwEvNone)
       {
-       // Build event
+        // Build event
         Event E(Event::EvSwitch);
         E.Switch = SwE;
 
