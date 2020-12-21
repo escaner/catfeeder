@@ -1,7 +1,7 @@
 {
     "configurations": [
         {
-            "name": "Arduino Nano",
+            "name": "Linux/Nano",
             "includePath": [
                 "${HOME}/.arduino15/packages/arduino/hardware/avr/**",
                 "${HOME}/.arduino15/packages/arduino/tools/avr-gcc/**",
