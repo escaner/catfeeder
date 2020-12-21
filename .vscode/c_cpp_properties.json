@@ -1,30 +1,25 @@
 {
     "configurations": [
         {
-            "name": "Linux",
+            "name": "Arduino Nano",
             "includePath": [
-                "${HOME}/.arduino15/packages/arduino/tools/**",
-                "${HOME}/.arduino15/packages/arduino/hardware/avr/1.8.3/**",
-                "${HOME}/Arduino/libraries/**",
-//                "/usr/lib64/Arduino-1.8.13/hardware/arduino/avr/**",
-//                "/usr/lib64/Arduino-1.8.13/tools/**",
-//                "/usr/lib64/Arduino-1.8.13/hardware/arduino/avr/variants/standard",
-                "/usr/avr/sys-root/include/"
+                "${HOME}/.arduino15/packages/arduino/hardware/avr/**",
+                "${HOME}/.arduino15/packages/arduino/tools/avr-gcc/**",
+                "${HOME}/Arduino/libraries/**"
             ],
-            "forcedInclude": [
-                "${HOME}/.arduino15/packages/arduino/hardware/avr/1.8.3/cores/arduino/Arduino.h",
-                "${HOME}/packages/arduino/tools/avr-gcc/7.3.0-atmel3.6.1-arduino7/avr/include/stdint.h",
-                "/usr/avr/sys-root/include/avr/iom328p.h"
-            ],
+            "forcedInclude": [],
             "defines": [
-//                "UBRRH",
+                "UBRRH",
                 "ARDUINO=10813",
                 "USBCON"
             ],
-            "intelliSenseMode": "gcc-x64",
-            "compilerPath": "/usr/bin/gcc",
+            "intelliSenseMode": "gcc-x86",
+            "compilerPath": "${env:HOME}/.arduino15/packages/arduino/tools/avr-gcc/7.3.0-atmel3.6.1-arduino7/bin/avr-gcc",
             "cStandard": "c11",
-            "cppStandard": "c++11"
+            "cppStandard": "c++11",
+            "compilerArgs": [
+                "-mmcu=atmega328p"
+            ]
         }
     ],
     "version": 4
