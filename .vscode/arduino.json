@@ -1,7 +1,7 @@
 {
-    "board": "arduino:avr:nano",
+    "board": "suse-arduino:avr:nano",
     "sketch": "src/catfeeder.ino",
-    "configuration": "cpu=atmega328",
     "port": "/dev/ttyUSB0",
-    "output": "../build-catfeeder"
+    "output": "../build-catfeeder",
+    "configuration": "cpu=atmega328"
 }

@@ -1,7 +1,7 @@
 {
     "configurations": [
         {
-            "name": "Linux/Nano",
+            "name": "Linux/Nano (local)",
             "includePath": [
                 "${HOME}/.arduino15/packages/arduino/hardware/avr/**",
                 "${HOME}/.arduino15/packages/arduino/tools/avr-gcc/**",
@@ -15,6 +15,26 @@
             ],
             "intelliSenseMode": "gcc-x86",
             "compilerPath": "${env:HOME}/.arduino15/packages/arduino/tools/avr-gcc/7.3.0-atmel3.6.1-arduino7/bin/avr-gcc",
+            "cStandard": "c11",
+            "cppStandard": "c++11",
+            "compilerArgs": [
+                "-mmcu=atmega328p"
+            ]
+        },
+        {
+            "name": "Linux/Nano (system)",
+            "includePath": [
+                "/usr/lib64/arduino/hardware/suse-arduino/avr/**",
+                "${HOME}/Arduino/libraries/**"
+            ],
+            "forcedInclude": [],
+            "defines": [
+                "UBRRH",
+                "ARDUINO=10813",
+                "USBCON"
+            ],
+            "intelliSenseMode": "gcc-x86",
+            "compilerPath": "/usr/bin/avr-gcc",
             "cStandard": "c11",
             "cppStandard": "c++11",
             "compilerArgs": [
