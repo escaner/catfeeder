@@ -19,7 +19,7 @@ public:
   SwitchPnl(uint8_t PinSelectA, uint8_t PinSelectB, uint8_t PinEnter,
     uint8_t PinBack);
   void init() const;
-  Event::SwitchEvent check();
+  Event::SwitchEvent check(uint16_t LoopCnt = 1);
 
 protected:
   uint8_t _PinSelectA, _PinSelectB;  // Pins used by rotary encoder Select

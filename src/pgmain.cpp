@@ -91,9 +91,8 @@ PageAction PgMain::event(const Event &E)
         _ManFeeding = false;
         return PageAction(Action::AcManualFeedEnd);
       }
-      else
-        // On any other switch, just continue feeding
-        return PageAction(Action::AcManualFeedContinue);
+      // else: On any other switch, just ignore it and continue feeding
+      return PageAction(Action::AcManualFeedContinue);
     }
     // else (no manually feeding), check other switches
     switch (E.Switch)

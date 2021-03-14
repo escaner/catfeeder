@@ -17,13 +17,16 @@
  *    or an overflow condition will happen.
  */
 Auger::Auger(uint8_t PinStep, uint8_t PinDir, uint8_t PinMs1, uint8_t PinMs2,
-    uint8_t PinEnable, uint8_t Rpm, uint8_t EighthRevsPerQtyUnit):
+    uint8_t PinEnable, uint8_t Rpm, uint8_t EighthRevsPerQtyUnit,
+    uint8_t EighthRevsPerBackup):
   _PinStep(PinStep),
   _PinDir(PinDir),
   _PinMs1(PinMs1),
   _PinMs2(PinMs2),
   _PinEnable(PinEnable),
   _EighthRevsPerQtyUnit(EighthRevsPerQtyUnit),
+  _StepsContinuousFeed(EighthRevsPerQtyUnit * _STEPS_PER_8REV),
+  _StepsBackup(EighthRevsPerBackup * _STEPS_PER_8REV),
   // Calculate ms per half step
   _HalfStepTime( (unsigned int)
     ((60UL * 1000000UL) /
@@ -42,9 +45,9 @@ Auger::Auger(uint8_t PinStep, uint8_t PinDir, uint8_t PinMs1, uint8_t PinMs2,
   // Prepare EasyDriver controller
   digitalWrite(PinEnable, HIGH);
   digitalWrite(PinStep, LOW);
-  digitalWrite(PinDir, _DIRECTION);
-  digitalWrite(PinMs1, LOW);
-  digitalWrite(PinMs2, LOW);
+  digitalWrite(PinDir, _DIR_FORWARD);
+  digitalWrite(PinMs1, HIGH);
+  digitalWrite(PinMs2, HIGH);
 }
 
 
@@ -59,14 +62,19 @@ void Auger::feed(uint8_t Quantity) const
   uint16_t Steps;
   
   // Calculate number of steps for this meal
-  Steps = uint16_t(Quantity * _EighthRevsPerQtyUnit) * _STEPS_PER_8REV;
+  Steps = uint16_t(_EighthRevsPerQtyUnit) * _STEPS_PER_8REV;
+  //  Steps = uint16_t(Quantity * _EighthRevsPerQtyUnit) * _STEPS_PER_8REV;
 
 
   // Engage the motor
   _enableMotor();
 
-  // Deliver the food turning the motor
-  _turnMotor(Steps);
+  // Deliver the food turning the motor and jiggling every quantity unit
+  while (Quantity--)
+  {
+    _jiggle();
+    _turnMotor(Steps);
+  }
  
   // Save power
   _disableMotor();
@@ -84,11 +92,12 @@ void Auger::startFeeding() const
 
 
 /*
- *   Continues a semi-synchronous feed.
+ *   Continues a semi-synchronous feed, jiggling on each call
  */
 void Auger::keepFeeding() const
 {
-  _turnMotor(_STEPS_CONTINUOUS_FEED);
+  _jiggle();
+  _turnMotor(_StepsContinuousFeed);
 }
 
 
@@ -134,4 +143,16 @@ void Auger::_turnMotor(uint16_t NumSteps) const
     digitalWrite(_PinStep, LOW);
     delayMicroseconds(_HalfStepTime);
   }
+}
+
+
+/*
+ *  Jiggles the auger back and forth to prevent it getting stuck.
+ */
+void Auger::_jiggle() const
+{
+  digitalWrite(_PinDir, _DIR_BACKWARD);
+  _turnMotor(_StepsBackup);
+  digitalWrite(_PinDir, _DIR_FORWARD);
+  _turnMotor(_StepsBackup);
 }

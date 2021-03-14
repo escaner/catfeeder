@@ -59,7 +59,8 @@ static Display Lcd(PIN_LCD_RS, PIN_LCD_E, PIN_LCD_D4, PIN_LCD_D5, PIN_LCD_D6,
 
 // Object to control the auger on the EasyDriver stepper motor
 static Auger Edsm(PIN_ED_STEP, PIN_ED_DIR, PIN_ED_MS1, PIN_ED_MS2,
-  PIN_ED_ENABLE, AUGER_RPM, AUGER_EIGHTH_REVS_PER_MEAL_QTY);
+  PIN_ED_ENABLE, AUGER_RPM, AUGER_EIGHTH_REVS_PER_MEAL_QTY,
+  AUGER_EIGHTH_REVS_BACKUP);
 
 
 /***********/
@@ -135,7 +136,7 @@ void loop()
   }
 
   // Loop checking switch panel
-  for (uint16_t SwIdx=SWITCH_LOOP_COUNT; SwIdx; SwIdx--)
+  for (uint16_t SwIdx=SWITCH_LOOP_CNT; SwIdx; SwIdx--)
   {
     Event::SwitchEvent SwE;
     bool ManuallyFeeding = false;
@@ -144,9 +145,9 @@ void loop()
     do
     {
       // Did we get a switch event?
-      if ((SwE = SwitchPanel.check()) != Event::SwEvNone)
+      if ((SwE = SwitchPanel.check(SWITCH_STAB_LOOP_CNT)) != Event::SwEvNone)
       {
-        // Build event
+       // Build event
         Event E(Event::EvSwitch);
         E.Switch = SwE;
 
@@ -247,7 +248,7 @@ static bool sendEventAndHandleActions(Event E)
       End = true;
       break;
     case Action::AcManualFeedContinue:
-      Edsm.keepFeeding();
+      // No Edsm feeding here, it is handled by the caller
       Feeding = true;
       End = true;
       break;

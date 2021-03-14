@@ -62,6 +62,31 @@ public:
 #pragma GCC diagnostic pop
   }
 
+  // Assignment operator
+  Action & Action::operator=(const Action &Ac)
+  {
+    Id = Ac.Id;
+
+#pragma GCC diagnostic push
+// Disable: warning: enumeration value not handled in switch
+#pragma GCC diagnostic ignored "-Wswitch"
+
+    switch (Id)
+    {
+    case AcNeedMeal:
+    case AcSetMeal:
+      MealId = Ac.MealId;
+      break;
+    case AcSetTimeUtc:
+      Time = Ac.Time;
+      break;
+    }
+
+#pragma GCC diagnostic pop
+
+    return *this;
+  }
+
 
   /***************/
   /* Member data */

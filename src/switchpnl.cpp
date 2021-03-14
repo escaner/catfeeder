@@ -39,44 +39,56 @@ void SwitchPnl::init() const
 
 /*
  *   Reads status of switches pins and returns an Event when changes are
- *  detected.
+ *  detected. As it is needed for the switch readings to stabilize, one single
+ *  read with a change will never deliver a switch change event. Therefore
+ *  the LoopCnt parameter is provided to try a maximum of LoopCnt iterations
+ *  before giving up and returning a no event status. The moment a switch change
+ *  is positively registered, the method just returns it.
+ *  Parameters:
+ *  * LoopCnt: loop a maximum of LoopCnt iterations waiting for the switch
+ *    to stabilize. If 0, no reads are taken and just returns SwEvNone.
+ *  Returns: the registered switch event if any, otherwise SwEvNone.
  */
-Event::SwitchEvent SwitchPnl::check()
+Event::SwitchEvent SwitchPnl::check(uint16_t LoopCnt)
 {
   uint8_t Val0, Val1;
   int8_t StepSelect;
 
-  // Check Select encoder
-  Val0 = digitalRead(_PinSelectA);
-  Val1 = digitalRead(_PinSelectB);
-  StepSelect = _Select.update(Val0, Val1);
-  if (StepSelect < 0)
-    return Event::SwEvSelectCcw;
-  else if (StepSelect > 0)
-    return Event::SwEvSelectCw;
+  // Iterate LoopCnt times waiting for the switch event to stabilize
+  while (LoopCnt--)
+  {
+    // Check Select encoder
+    Val0 = digitalRead(_PinSelectA);
+    Val1 = digitalRead(_PinSelectB);
+    StepSelect = _Select.update(Val0, Val1);
+    if (StepSelect < 0)
+      return Event::SwEvSelectCcw;
+    else if (StepSelect > 0)
+      return Event::SwEvSelectCw;
 
 #pragma GCC diagnostic push
-// Disable: warning: enumeration value 'FLANK_NONE' not handled in switch
+  // Disable: warning: enumeration value 'FLANK_NONE' not handled in switch
 #pragma GCC diagnostic ignored "-Wswitch"
 
-  // Check Enter button: falling flank is button press
-  Val0 = digitalRead(_PinEnter);
-  switch (_Enter.updateFlank(Val0))
-  {
-  case Switch::FLANK_FALLING:
-    return Event::SwEvEnterPress;
-  case Switch::FLANK_RISING:
-    return Event::SwEvEnterRelease;
-  }
+    // Check Enter button: falling flank is button press
+    Val0 = digitalRead(_PinEnter);
+    switch (_Enter.updateFlank(Val0))
+    {
+    case Switch::FLANK_FALLING:
+      return Event::SwEvEnterPress;
+    case Switch::FLANK_RISING:
+      return Event::SwEvEnterRelease;
+    }
 
-  // Check Back button: falling flank is button press
-  Val0 = digitalRead(_PinBack);
-  switch (_Back.updateFlank(Val0))
-  {
-  case Switch::FLANK_FALLING:
-    return Event::SwEvBackPress;
-  case Switch::FLANK_RISING:
-    return Event::SwEvBackRelease;
+    // Check Back button: falling flank is button press
+    Val0 = digitalRead(_PinBack);
+    switch (_Back.updateFlank(Val0))
+    {
+    case Switch::FLANK_FALLING:
+      return Event::SwEvBackPress;
+    case Switch::FLANK_RISING:
+      return Event::SwEvBackRelease;
+    }
   }
 
 #pragma GCC diagnostic pop

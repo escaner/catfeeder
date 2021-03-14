@@ -62,7 +62,7 @@ public:
 // Disable: warning: enumeration value 'EvInit' not handled in switch
 #pragma GCC diagnostic ignored "-Wswitch"
 
-  switch (Id)
+    switch (Id)
     {
     case EvSwitch:
       Switch = Ev.Switch;
@@ -80,6 +80,37 @@ public:
     }
 
 #pragma GCC diagnostic pop
+  }
+
+  // Assignment operator
+  Event & operator=(const Event &Ev)
+  {
+    Id = Ev.Id;
+
+#pragma GCC diagnostic push
+// Disable: warning: enumeration value 'EvInit' not handled in switch
+#pragma GCC diagnostic ignored "-Wswitch"
+
+    switch (Id)
+    {
+    case EvSwitch:
+      Switch = Ev.Switch;
+      break;
+    case EvTime:
+    case EvTimeUtc:
+      Time = Ev.Time;
+      break;
+    case EvMeal:
+      pMeal = Ev.pMeal;
+      break;
+    case EvNextMeal:
+      NextMeal = Ev.NextMeal;
+      break;
+    }
+
+#pragma GCC diagnostic pop
+
+    return *this;
   }
 
 

@@ -23,9 +23,11 @@ static const bool ENABLE_DST = true;
 // Auger speed in revolutions per minute
 static const uint8_t AUGER_RPM = 15U;
 
-// How many 1/8th of a revolution should the auger be rotated for each meal
-// quantity unit
+// How many 1/8th of a revolution should the auger be rotated per meal qty unit
 static const uint8_t AUGER_EIGHTH_REVS_PER_MEAL_QTY = 2U;
+
+// How many 1/8th of a revolution should the auger backup per meal qty unit
+static const uint8_t AUGER_EIGHTH_REVS_BACKUP = 1U;
 
 // FEED interval check in ms
 static const unsigned long FEED_CHECK_INTERVAL = 5000UL;
@@ -34,7 +36,11 @@ static const unsigned long FEED_CHECK_INTERVAL = 5000UL;
 static const unsigned long TIME_UPDATE_INTERVAL = 1000UL;
 
 // Iterations reading switch panel per loop() call
-static const uint16_t SWITCH_LOOP_COUNT = 1000U;
+static const uint16_t SWITCH_LOOP_CNT = 500U;
+
+// How many reads of the switches status to perform waiting fot them to
+// stabilize their values (mainly for manual feed button release)
+static const uint16_t SWITCH_STAB_LOOP_CNT = 50U;
 
 // Time sice a meal is served to update the LCD next meal information in ms
 // It must be MEAL_UPDATE_DELAY > 60000 + TIME_UPDATE_INTERVAL
